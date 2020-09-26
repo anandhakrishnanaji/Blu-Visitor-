@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class SettingsTab extends StatelessWidget {
-  final List<Map> _gensettingsList = [
-    {'title': 'lang', 'trailing': null, 'onTap': null},
-    {'title': 'aboutblu', 'trailing': null, 'onTap': null},
-    {'title': 'rate', 'trailing': null, 'onTap': null},
-  ];
+  final Map<String, String> _trailingLanguage = {
+    "en_US": "English",
+    "hi_IN": "हिंदी"
+  };
 
   final List<Map> _accsettingsList = [
     {'title': 'cp', 'trailing': null, 'onTap': null},
@@ -20,8 +19,21 @@ class SettingsTab extends StatelessWidget {
       'onTap': null
     },
   ];
+
   @override
   Widget build(BuildContext context) {
+    final List<Map> _gensettingsList = [
+      {
+        'title': 'lang',
+        'trailing': Text(
+          _trailingLanguage[context.locale.toString()],
+          style: TextStyle(color: Colors.grey[600], fontSize: 18),
+        ),
+        'onTap': null
+      },
+      {'title': 'aboutblu', 'trailing': null, 'onTap': null},
+      {'title': 'rate', 'trailing': null, 'onTap': null},
+    ];
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[

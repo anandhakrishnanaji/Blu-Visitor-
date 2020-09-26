@@ -12,6 +12,7 @@ class HomeGridTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           CircleAvatar(
+            backgroundColor: Colors.white,
             radius: 30,
             backgroundImage: AssetImage('assets/images/$text.png'),
           ),
