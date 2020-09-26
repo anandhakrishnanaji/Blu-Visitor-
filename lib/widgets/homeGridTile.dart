@@ -7,14 +7,18 @@ class HomeGridTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.all(Radius.circular(30))),
+          color: Colors.grey[200], borderRadius: BorderRadius.circular(30)),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           CircleAvatar(
+            radius: 30,
             backgroundImage: AssetImage('assets/images/$text.png'),
           ),
-          Text(text)
+          Text(
+            text,
+            style: TextStyle(fontSize: 18),
+          )
         ],
       ),
     );

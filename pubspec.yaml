@@ -30,6 +30,8 @@ dependencies:
   cupertino_icons: ^0.1.3
   easy_localization: ^2.3.3
   intl: ^0.16.1
+  google_fonts: ^1.1.0
+
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +64,7 @@ flutter:
     - assets/images/attendance.jpg
     - assets/images/barcode.jpg
     - assets/images/visitor.jpg
+    - assets/images/user.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

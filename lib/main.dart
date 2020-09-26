@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import './pages/homePage.dart';
+import './pages/addVisitorType.dart';
 
 void main() {
   runApp(
@@ -38,15 +40,22 @@ class _MyAppState extends State<MyApp> {
     MaterialColor colorCustom = MaterialColor(0xFF2962FF, color);
 
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
-        locale: context.locale,
-        title: 'Blu Visitor App',
-        theme: ThemeData(
-          primarySwatch: colorCustom,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      title: 'Blu Visitor App',
+      theme: ThemeData(
+        primarySwatch: colorCustom,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        textTheme: GoogleFonts.openSansTextTheme(
+          Theme.of(context).textTheme,
         ),
-        home: Home());
+      ),
+      home: Home(),
+      routes: {
+        VisitorType.routeName: (ctx) => VisitorType(),
+      },
+    );
   }
 }

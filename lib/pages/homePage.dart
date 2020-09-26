@@ -5,6 +5,7 @@ import '../tabs/historyTab.dart';
 import '../tabs/homeTab.dart';
 import '../tabs/notificationsTab.dart';
 import '../tabs/settingsTab.dart';
+import './addVisitorType.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -45,7 +46,7 @@ class HomeState extends State<Home> {
       body: _widgets[selectedIndex],
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: null,
+        onPressed: () => Navigator.of(context).pushNamed(VisitorType.routeName),
         child: Container(
           margin: EdgeInsets.all(15.0),
           child: Icon(Icons.add),
@@ -115,7 +116,11 @@ class HomeState extends State<Home> {
         ),
         shape: CircularNotchedRectangle(),
       ),
-      drawer: Drawer(child: Container(color: Colors.blue[100],),),
+      drawer: Drawer(
+        child: Container(
+          color: Colors.blue[100],
+        ),
+      ),
     );
   }
 }

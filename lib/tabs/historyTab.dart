@@ -10,7 +10,7 @@ class HistoryTab extends StatelessWidget {
       "mobile": "4356789",
       "type": "Visitor",
       "date": DateTime.now(),
-      "imguri": "assets/images/hello.png"
+      "imguri": "assets/images/user.png"
     },
     {
       "name": "Beatrice",
@@ -18,7 +18,7 @@ class HistoryTab extends StatelessWidget {
       "mobile": "4356789",
       "type": "Visitor",
       "date": DateTime.now(),
-      "imguri": "assets/images/hello.png"
+      "imguri": "assets/images/user.png"
     },
     {
       "name": "Beatrice",
@@ -26,7 +26,7 @@ class HistoryTab extends StatelessWidget {
       "mobile": "4356789",
       "type": "Visitor",
       "date": DateTime.now(),
-      "imguri": "assets/images/hello.png"
+      "imguri": "assets/images/user.png"
     },
     {
       "name": "Beatrice",
@@ -34,7 +34,7 @@ class HistoryTab extends StatelessWidget {
       "mobile": "4356789",
       "type": "Visitor",
       "date": DateTime.now(),
-      "imguri": "assets/images/hello.png"
+      "imguri": "assets/images/user.png"
     },
     {
       "name": "Beatrice",
@@ -42,7 +42,7 @@ class HistoryTab extends StatelessWidget {
       "mobile": "4356789",
       "type": "Visitor",
       "date": DateTime.now(),
-      "imguri": "assets/images/hello.png"
+      "imguri": "assets/images/user.png"
     },
   ];
   @override
