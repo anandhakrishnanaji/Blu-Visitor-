@@ -6,6 +6,7 @@ import '../tabs/homeTab.dart';
 import '../tabs/notificationsTab.dart';
 import '../tabs/settingsTab.dart';
 import './addVisitorType.dart';
+import '../widgets/drawerTile.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -37,27 +38,27 @@ class HomeState extends State<Home> {
     },
     {
       'text': 'staffreg',
-      'icon': Icons.home,
+      'icon': Icons.person_add,
       'ontap': (BuildContext ctx) => Navigator.pop(ctx)
     },
     {
       'text': 'staffup',
-      'icon': Icons.home,
+      'icon': Icons.update,
       'ontap': (BuildContext ctx) => Navigator.pop(ctx)
     },
     {
       'text': 'memapprove',
-      'icon': Icons.home,
+      'icon': Icons.check,
       'ontap': (BuildContext ctx) => Navigator.pop(ctx)
     },
     {
       'text': 'complaint',
-      'icon': Icons.home,
+      'icon': Icons.warning,
       'ontap': (BuildContext ctx) => Navigator.pop(ctx)
     },
     {
       'text': 'logout',
-      'icon': Icons.home,
+      'icon': Icons.exit_to_app,
       'ontap': (BuildContext ctx) => Navigator.pop(ctx)
     },
   ];
@@ -143,7 +144,13 @@ class HomeState extends State<Home> {
       ),
       drawer: Drawer(
         child: Container(
-          color: Colors.blue[100],
+          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 10),
+          color: Colors.blue[200],
+          child: Column(
+            children: _drawerList
+                .map((e) => DrawerTile(e['text'], e['icon'], e['ontap']))
+                .toList(),
+          ),
         ),
       ),
     );

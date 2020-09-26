@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class LanguagePage extends StatefulWidget {
+  static const routeName = '/languagePage';
   @override
   _LanguagePageState createState() => _LanguagePageState();
 }
@@ -16,9 +17,12 @@ class _LanguagePageState extends State<LanguagePage> {
   }
 
   setSelectedRadioTile(int val, BuildContext ctx) {
-    final j = _languages[val].split('_');
+    print(ctx.locale.toString());
+    final List<String> j = _languages[val].split('_');
+    print(j[0] + j[1]);
     setState(() {
       ctx.locale = Locale(j[0], j[1]);
+      print(ctx.locale.toString());
       selectedRadioTile = val;
     });
   }
