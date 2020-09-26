@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SettingsTab extends StatelessWidget {
   final List<Map> _gensettingsList = [
-    {'title': 'Language', 'trailing': null, 'onTap': null},
-    {'title': 'About BluApp', 'trailing': null, 'onTap': null},
-    {'title': 'Rate BluApp', 'trailing': null, 'onTap': null},
+    {'title': 'lang', 'trailing': null, 'onTap': null},
+    {'title': 'aboutblu', 'trailing': null, 'onTap': null},
+    {'title': 'rate', 'trailing': null, 'onTap': null},
   ];
 
   final List<Map> _accsettingsList = [
-    {'title': 'Change Password', 'trailing': null, 'onTap': null},
+    {'title': 'cp', 'trailing': null, 'onTap': null},
     {
-      'title': 'Logout',
+      'title': 'logout',
       'trailing': Icon(
         Icons.exit_to_app,
-        color: Colors.red,size: 25,
+        color: Colors.red,
+        size: 25,
       ),
       'onTap': null
     },
@@ -27,14 +29,14 @@ class SettingsTab extends StatelessWidget {
             padding: EdgeInsets.all(10),
             width: double.infinity,
             child: Text(
-              'General',
+              'gen'.tr(),
               style: TextStyle(color: Colors.grey[700], fontSize: 15),
             ),
             decoration: BoxDecoration(color: Colors.grey[350]),
           ),
           ..._gensettingsList
               .map((e) => ListTile(
-                    title: Text(e['title']),
+                    title: Text(e['title'].tr()),
                     //leading: leading,
                     trailing: e['trailing'],
                     onTap: e['onTap'],
@@ -44,20 +46,20 @@ class SettingsTab extends StatelessWidget {
             value: true,
             //activeColor: switchActiveColor,
             onChanged: null,
-            title: Text('Dark Theme'),
+            title: Text('dkth'),
           ),
           Container(
             padding: EdgeInsets.all(10),
             width: double.infinity,
             child: Text(
-              'Account',
+              'acc'.tr(),
               style: TextStyle(color: Colors.grey[700], fontSize: 15),
             ),
             decoration: BoxDecoration(color: Colors.grey[350]),
           ),
           ..._accsettingsList
               .map((e) => ListTile(
-                    title: Text(e['title']),
+                    title: Text(e['title'].tr()),
                     //leading: leading,
                     trailing: e['trailing'],
                     onTap: e['onTap'],

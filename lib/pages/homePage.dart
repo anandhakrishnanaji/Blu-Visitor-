@@ -29,19 +29,44 @@ class HomeState extends State<Home> {
     SettingsTab()
   ];
 
+  final List<Map> _drawerList = [
+    {
+      'text': 'home',
+      'icon': Icons.home,
+      'ontap': (BuildContext ctx) => Navigator.pop(ctx)
+    },
+    {
+      'text': 'staffreg',
+      'icon': Icons.home,
+      'ontap': (BuildContext ctx) => Navigator.pop(ctx)
+    },
+    {
+      'text': 'staffup',
+      'icon': Icons.home,
+      'ontap': (BuildContext ctx) => Navigator.pop(ctx)
+    },
+    {
+      'text': 'memapprove',
+      'icon': Icons.home,
+      'ontap': (BuildContext ctx) => Navigator.pop(ctx)
+    },
+    {
+      'text': 'complaint',
+      'icon': Icons.home,
+      'ontap': (BuildContext ctx) => Navigator.pop(ctx)
+    },
+    {
+      'text': 'logout',
+      'icon': Icons.home,
+      'ontap': (BuildContext ctx) => Navigator.pop(ctx)
+    },
+  ];
+  final List<String> title = ['home', 'notifications', 'history', 'settings'];
   @override
   Widget build(BuildContext context) {
-    print('title'.tr());
-    final List<String> title = [
-      'home'.tr(),
-      'notifications'.tr(),
-      'history'.tr(),
-      'settings'.tr()
-    ];
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(title[selectedIndex]),
+        title: Text(title[selectedIndex]).tr(),
       ),
       body: _widgets[selectedIndex],
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

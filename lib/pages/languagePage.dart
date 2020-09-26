@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LanguagePage extends StatelessWidget {
   final List _languages = [
     'English',
-    'Hindi',
-    'Malayalam',
-    'Marathi',
-    'Tamil',
-    'Kannada'
+    'हिंदी',
+    'മലയാളം',
+    'मराठी',
+    'தமிழ்',
+    'ಕನ್ನಡ'
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Language Settings'),
+        title: Text('langset'.tr()),
         centerTitle: true,
       ),
       body: Container(

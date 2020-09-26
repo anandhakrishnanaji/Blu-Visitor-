@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LoginPage extends StatefulWidget {
   static String routeName = '/loginPage';
@@ -22,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
       keyboardType: TextInputType.phone,
       autofocus: false,
       decoration: InputDecoration(
-        hintText: 'Phone Number',
+        hintText: 'phnno'.tr(),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -32,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
       autofocus: false,
       obscureText: true,
       decoration: InputDecoration(
-        hintText: 'Password',
+        hintText: 'passw'.tr(),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -47,13 +48,13 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () {},
         padding: EdgeInsets.all(12),
         color: Colors.lightBlueAccent,
-        child: Text('Log In', style: TextStyle(color: Colors.white)),
+        child: Text('login'.tr(), style: TextStyle(color: Colors.white)),
       ),
     );
 
     final forgotLabel = FlatButton(
       child: Text(
-        'Forgot password?',
+        'forgtpass'.tr(),
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {},
@@ -66,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
           shrinkWrap: true,
           padding: EdgeInsets.only(left: 24.0, right: 24.0),
           children: <Widget>[
-            Text('Login'),
+            Text('login').tr(),
             logo,
             SizedBox(height: 48.0),
             phone,

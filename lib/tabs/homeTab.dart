@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../widgets/homePageTile.dart';
 
 class HomeTab extends StatelessWidget {
   final List<Map<String, String>> _tiles = [
-    {'text': 'In Waiting', 'imgName': 'waiting'},
-    {'text': 'Inside Visitor', 'imgName': 'visitor'},
-    {'text': 'Search Visit', 'imgName': 'search'},
-    {'text': 'Scan Meeting Code', 'imgName': 'barcode'},
-    {'text': 'Staff Attendance', 'imgName': 'attendance'}
+    {'text': 'inwait', 'imgName': 'waiting'},
+    {'text': 'invisit', 'imgName': 'visitor'},
+    {'text': 'svisit', 'imgName': 'search'},
+    {'text': 'scanmeetcode', 'imgName': 'barcode'},
+    {'text': 'staffatt', 'imgName': 'attendance'}
   ];
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class HomeTab extends StatelessWidget {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3, childAspectRatio: 0.75),
                   itemBuilder: (context, index) => HomeTabTile(
-                      _tiles[index]['text'], _tiles[index]['imgName'])))
+                      _tiles[index]['text'].tr(), _tiles[index]['imgName'])))
         ],
       ),
     );

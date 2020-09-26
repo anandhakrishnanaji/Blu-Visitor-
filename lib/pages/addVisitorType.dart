@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 import '../widgets/homeGridTile.dart';
 
 class VisitorType extends StatelessWidget {
@@ -12,13 +14,14 @@ class VisitorType extends StatelessWidget {
   ];
   @override
   Widget build(BuildContext context) {
+    print(context.locale.toString());
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text('Add a visitor'),
+        title: Text('adav').tr(),
         centerTitle: true,
       ),
       body: Container(
@@ -29,7 +32,7 @@ class VisitorType extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(15),
               child: Text(
-                'Choose the type of visitor',
+                'chosavis'.tr(),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
@@ -41,7 +44,8 @@ class VisitorType extends StatelessWidget {
                       childAspectRatio: 1.75,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10),
-                  itemBuilder: (context, index) => HomeGridTile(_tiles[index])),
+                  itemBuilder: (context, index) =>
+                      HomeGridTile(_tiles[index].tr())),
             )
           ],
         ),
