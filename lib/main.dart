@@ -6,11 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 import './pages/homePage.dart';
 import './pages/addVisitorType.dart';
 import './pages/languagePage.dart';
+import './pages/loginPage.dart';
 
 void main() {
   runApp(
     EasyLocalization(
-        supportedLocales: [Locale('en', 'US'),Locale('hi','IN')],
+        supportedLocales: [Locale('en', 'US'), Locale('hi', 'IN')],
         path: 'assets/translations',
         fallbackLocale: Locale('en', 'US'),
         child: MyApp()),
@@ -53,10 +54,11 @@ class _MyAppState extends State<MyApp> {
           Theme.of(context).textTheme,
         ),
       ),
-      home: Home(),
+      home: LoginPage(),
       routes: {
+        Home.routeName: (ctx) => Home(),
         VisitorType.routeName: (ctx) => VisitorType(),
-        LanguagePage.routeName: (ctx) => LanguagePage()
+        LanguagePage.routeName: (ctx) => LanguagePage(),
       },
     );
   }

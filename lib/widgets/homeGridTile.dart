@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeGridTile extends StatelessWidget {
   final String text;
@@ -19,7 +20,7 @@ class HomeGridTile extends StatelessWidget {
           Text(
             text,
             style: TextStyle(fontSize: 18),
-          )
+          ).tr()
         ],
       ),
     );

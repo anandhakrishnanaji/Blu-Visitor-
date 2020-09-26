@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import './homePage.dart';
+
 class LoginPage extends StatefulWidget {
   static String routeName = '/loginPage';
   @override
@@ -10,11 +12,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
-        radius: 48.0,
+        radius: 0.245 * width,
         child: Image.asset('assets/images/logo.png'),
       ),
     );
@@ -39,24 +44,25 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    final loginButton = Padding(
+    final login = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
       child: RaisedButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
         ),
-        onPressed: () {},
+        onPressed: () =>
+            Navigator.pushReplacementNamed(context, Home.routeName),
         padding: EdgeInsets.all(12),
-        color: Colors.lightBlueAccent,
-        child: Text('login'.tr(), style: TextStyle(color: Colors.white)),
+        color: Colors.blueAccent[700],
+        child: Text('login', style: TextStyle(color: Colors.white)).tr(),
       ),
     );
 
     final forgotLabel = FlatButton(
       child: Text(
-        'forgtpass'.tr(),
+        'forgtpass',
         style: TextStyle(color: Colors.black54),
-      ),
+      ).tr(),
       onPressed: () {},
     );
 
@@ -65,16 +71,15 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: ListView(
           shrinkWrap: true,
-          padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          padding: EdgeInsets.only(left: 0.058 * width, right: 0.058 * width),
           children: <Widget>[
-            Text('login').tr(),
             logo,
-            SizedBox(height: 48.0),
+            SizedBox(height: 0.065 * height),
             phone,
             SizedBox(height: 8.0),
             password,
-            SizedBox(height: 24.0),
-            loginButton,
+            SizedBox(height: 0.033 * height),
+            login,
             forgotLabel
           ],
         ),

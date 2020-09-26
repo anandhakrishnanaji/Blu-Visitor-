@@ -13,12 +13,13 @@ class HomeTab extends StatelessWidget {
   ];
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return Container(
       child: Column(
         children: <Widget>[
           Container(
             margin: EdgeInsets.all(15),
-            height: 200,
+            height: 0.273 * height,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 image: DecorationImage(

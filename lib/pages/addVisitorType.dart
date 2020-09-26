@@ -45,7 +45,7 @@ class VisitorType extends StatelessWidget {
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10),
                   itemBuilder: (context, index) =>
-                      HomeGridTile(_tiles[index].tr())),
+                      HomeGridTile(_tiles[index])),
             )
           ],
         ),

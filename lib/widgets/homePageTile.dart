@@ -7,6 +7,7 @@ class HomeTabTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Container(
       margin: const EdgeInsets.symmetric(
         horizontal: 10,
@@ -14,7 +15,7 @@ class HomeTabTile extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            height: 120,
+            height: 0.29 * width,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 color: Color.fromRGBO(39, 42, 54, 1),

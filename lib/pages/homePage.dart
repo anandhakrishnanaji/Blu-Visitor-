@@ -9,6 +9,7 @@ import './addVisitorType.dart';
 import '../widgets/drawerTile.dart';
 
 class Home extends StatefulWidget {
+  static const routeName='/homePage';
   @override
   State<StatefulWidget> createState() {
     return HomeState();
@@ -65,6 +66,7 @@ class HomeState extends State<Home> {
   final List<String> title = ['home', 'notifications', 'history', 'settings'];
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Text(title[selectedIndex]).tr(),
@@ -144,7 +146,8 @@ class HomeState extends State<Home> {
       ),
       drawer: Drawer(
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 10),
+          padding:
+              EdgeInsets.symmetric(vertical: 0.097 * height, horizontal: 10),
           color: Colors.blue[200],
           child: Column(
             children: _drawerList
