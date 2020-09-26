@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+import '../tabs/historyTab.dart';
+import '../tabs/homeTab.dart';
+import '../tabs/notificationsTab.dart';
+import '../tabs/settingsTab.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -8,61 +14,31 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  bool clickedCentreFAB =
-      false; //boolean used to handle container animation which expands from the FAB
-  int selectedIndex =
-      0; //to handle which item is currently selected in the bottom app bar
-  String text = "Home";
-
-  //call this method on click of each bottom app bar item to update the screen
-  void updateTabSelection(int index, String buttonText) {
+  int selectedIndex = 0;
+  void updateTabSelection(int index) {
     setState(() {
       selectedIndex = index;
-      text = buttonText;
     });
   }
+
+  final List<Widget> _widgets = [
+    HomeTab(),
+    NotificationsTab(),
+    HistoryTab(),
+    SettingsTab()
+  ];
+  final List<String> title = ['home', 'notifications', 'history', 'settings'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Align(
-            alignment: FractionalOffset.center,
-            //in this demo, only the button text is updated based on the bottom app bar clicks
-            child: RaisedButton(
-              child: Text(text),
-              onPressed: () {},
-            ),
-          ),
-          //this is the code for the widget container that comes from behind the floating action button (FAB)
-          Align(
-            alignment: FractionalOffset.bottomCenter,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 250),
-              //if clickedCentreFAB == true, the first parameter is used. If it's false, the second.
-              height:
-                  clickedCentreFAB ? MediaQuery.of(context).size.height : 1.0,
-              width:
-                  clickedCentreFAB ? MediaQuery.of(context).size.height : 1.0,
-              decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(clickedCentreFAB ? 0.0 : 300.0),
-                  color: Colors.blue),
-            ),
-          )
-        ],
+      appBar: AppBar(
+        title: Text(title[selectedIndex]).tr(),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation
-          .centerDocked, //specify the location of the FAB
+      body: _widgets[selectedIndex],
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            clickedCentreFAB =
-                !clickedCentreFAB; //to update the animated container
-          });
-        },
-        tooltip: "Centre FAB",
+        onPressed: null,
         child: Container(
           margin: EdgeInsets.all(15.0),
           child: Icon(Icons.add),
@@ -77,14 +53,12 @@ class HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
-                //update the bottom app bar view each time an item is clicked
                 onPressed: () {
-                  updateTabSelection(0, "Home");
+                  updateTabSelection(0);
                 },
                 iconSize: 27.0,
                 icon: Icon(
                   Icons.home,
-                  //darken the icon if it is selected or else give it a different color
                   color: selectedIndex == 0
                       ? Colors.blue.shade900
                       : Colors.grey.shade400,
@@ -92,27 +66,26 @@ class HomeState extends State<Home> {
               ),
               IconButton(
                 onPressed: () {
-                  updateTabSelection(1, "Outgoing");
+                  updateTabSelection(1);
                 },
                 iconSize: 27.0,
                 icon: Icon(
-                  Icons.call_made,
+                  Icons.notifications,
                   color: selectedIndex == 1
                       ? Colors.blue.shade900
                       : Colors.grey.shade400,
                 ),
               ),
-              //to leave space in between the bottom app bar items and below the FAB
               SizedBox(
                 width: 50.0,
               ),
               IconButton(
                 onPressed: () {
-                  updateTabSelection(2, "Incoming");
+                  updateTabSelection(2);
                 },
                 iconSize: 27.0,
                 icon: Icon(
-                  Icons.call_received,
+                  Icons.history,
                   color: selectedIndex == 2
                       ? Colors.blue.shade900
                       : Colors.grey.shade400,
@@ -120,7 +93,7 @@ class HomeState extends State<Home> {
               ),
               IconButton(
                 onPressed: () {
-                  updateTabSelection(3, "Settings");
+                  updateTabSelection(3);
                 },
                 iconSize: 27.0,
                 icon: Icon(
@@ -133,10 +106,7 @@ class HomeState extends State<Home> {
             ],
           ),
         ),
-        //to add a space between the FAB and BottomAppBar
         shape: CircularNotchedRectangle(),
-        //color of the BottomAppBar
-        color: Colors.white,
       ),
     );
   }
