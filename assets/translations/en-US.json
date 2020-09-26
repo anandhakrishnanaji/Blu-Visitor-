@@ -1,4 +1,13 @@
 {
   "title": "Title",
-  "msg": "Message"
+  "msg": "Message",
+  "name": "Name",
+  "company": "Company",
+  "mobile": "Mobile",
+  "type": "Type",
+  "home": "Home",
+  "notifications": "Notifications",
+  "settings": "Settings",
+  "history": "History",
+  "detail": "Detail"
 }

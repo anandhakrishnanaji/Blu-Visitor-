@@ -9,7 +9,14 @@ class SettingsTab extends StatelessWidget {
 
   final List<Map> _accsettingsList = [
     {'title': 'Change Password', 'trailing': null, 'onTap': null},
-    {'title': 'Logout', 'trailing': null, 'onTap': null},
+    {
+      'title': 'Logout',
+      'trailing': Icon(
+        Icons.exit_to_app,
+        color: Colors.red,size: 25,
+      ),
+      'onTap': null
+    },
   ];
   @override
   Widget build(BuildContext context) {
@@ -17,8 +24,13 @@ class SettingsTab extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            child: Text('General'),
-            decoration: BoxDecoration(color: Colors.grey),
+            padding: EdgeInsets.all(10),
+            width: double.infinity,
+            child: Text(
+              'General',
+              style: TextStyle(color: Colors.grey[700], fontSize: 15),
+            ),
+            decoration: BoxDecoration(color: Colors.grey[350]),
           ),
           ..._gensettingsList
               .map((e) => ListTile(
@@ -35,8 +47,13 @@ class SettingsTab extends StatelessWidget {
             title: Text('Dark Theme'),
           ),
           Container(
-            child: Text('Account'),
-            decoration: BoxDecoration(color: Colors.grey),
+            padding: EdgeInsets.all(10),
+            width: double.infinity,
+            child: Text(
+              'Account',
+              style: TextStyle(color: Colors.grey[700], fontSize: 15),
+            ),
+            decoration: BoxDecoration(color: Colors.grey[350]),
           ),
           ..._accsettingsList
               .map((e) => ListTile(

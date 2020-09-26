@@ -26,7 +26,7 @@ class NotificationTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Column(
-              children: <Widget>[Text('msg').tr(), Text(title), Text(message)],
+              children: <Widget>[Text('msg'.tr()), Text(title), Text(message)],
             ),
             Text(date)
           ],

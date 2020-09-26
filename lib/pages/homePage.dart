@@ -27,13 +27,20 @@ class HomeState extends State<Home> {
     HistoryTab(),
     SettingsTab()
   ];
-  final List<String> title = ['home', 'notifications', 'history', 'settings'];
 
   @override
   Widget build(BuildContext context) {
+    print('title'.tr());
+    final List<String> title = [
+      'home'.tr(),
+      'notifications'.tr(),
+      'history'.tr(),
+      'settings'.tr()
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(title[selectedIndex]).tr(),
+        title: Text(title[selectedIndex]),
       ),
       body: _widgets[selectedIndex],
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -60,7 +67,7 @@ class HomeState extends State<Home> {
                 icon: Icon(
                   Icons.home,
                   color: selectedIndex == 0
-                      ? Colors.blue.shade900
+                      ? Colors.blueAccent[700]
                       : Colors.grey.shade400,
                 ),
               ),
@@ -72,7 +79,7 @@ class HomeState extends State<Home> {
                 icon: Icon(
                   Icons.notifications,
                   color: selectedIndex == 1
-                      ? Colors.blue.shade900
+                      ? Colors.blueAccent[700]
                       : Colors.grey.shade400,
                 ),
               ),
@@ -87,7 +94,7 @@ class HomeState extends State<Home> {
                 icon: Icon(
                   Icons.history,
                   color: selectedIndex == 2
-                      ? Colors.blue.shade900
+                      ? Colors.blueAccent[700]
                       : Colors.grey.shade400,
                 ),
               ),
@@ -99,7 +106,7 @@ class HomeState extends State<Home> {
                 icon: Icon(
                   Icons.settings,
                   color: selectedIndex == 3
-                      ? Colors.blue.shade900
+                      ? Colors.blueAccent[700]
                       : Colors.grey.shade400,
                 ),
               ),
@@ -108,6 +115,7 @@ class HomeState extends State<Home> {
         ),
         shape: CircularNotchedRectangle(),
       ),
+      drawer: Drawer(child: Container(color: Colors.blue[100],),),
     );
   }
 }

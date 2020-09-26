@@ -16,16 +16,19 @@ class HomeTab extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
+            margin: EdgeInsets.all(15),
+            height: 200,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(30)),
+                borderRadius: BorderRadius.circular(30),
                 image: DecorationImage(
+                    fit: BoxFit.contain,
                     image: AssetImage('assets/images/flat.jpg'))),
           ),
           Expanded(
               child: GridView.builder(
                   itemCount: 5,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3),
+                      crossAxisCount: 3, childAspectRatio: 0.75),
                   itemBuilder: (context, index) => HomeTabTile(
                       _tiles[index]['text'], _tiles[index]['imgName'])))
         ],
