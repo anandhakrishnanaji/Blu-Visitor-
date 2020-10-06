@@ -31,7 +31,12 @@ dependencies:
   easy_localization: ^2.3.3
   intl: ^0.16.1
   google_fonts: ^1.1.0
-
+  provider: ^4.3.2+2
+  device_info: ^0.4.2+8
+  speech_to_text: ^2.7.0
+  avatar_glow: ^1.2.0
+  camera: ^0.5.8+7
+  floating_search_bar: ^0.3.0
 
 dev_dependencies:
   flutter_test:
@@ -50,11 +55,6 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/Guest.png
-    - assets/images/Cab.png
-    - assets/images/Delivery.png
-    - assets/images/Maintenance.png
-    - assets/images/Emergency.png
     - assets/translations/en-US.json
     - assets/translations/hi-IN.json
     - assets/images/waiting.jpg

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class HomeGridTile extends StatelessWidget {
-  final String text;
-  HomeGridTile(this.text);
+  final Map visitorType;
+  HomeGridTile(this.visitorType);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -15,10 +15,10 @@ class HomeGridTile extends StatelessWidget {
           CircleAvatar(
             backgroundColor: Colors.white,
             radius: 30,
-            backgroundImage: AssetImage('assets/images/$text.png'),
+            backgroundImage: NetworkImage(visitorType['logo']),
           ),
           Text(
-            text,
+            visitorType['name'],
             style: TextStyle(fontSize: 18),
           ).tr()
         ],
