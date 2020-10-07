@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:floating_search_bar/floating_search_bar.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/auth.dart';
 
 class SelectCompany extends StatefulWidget {
   static const routeName = '/selectCompany';
-  final String type;
-  SelectCompany(this.type);
+  // final String type;
+  // SelectCompany(this.type);
   @override
   _SelectCompanyState createState() => _SelectCompanyState();
 }
@@ -14,9 +17,9 @@ class SelectCompany extends StatefulWidget {
 class _SelectCompanyState extends State<SelectCompany> {
   List<Map> _fullCompany = [], _filtered = [];
 
-  Future<void> _obtainCompanies() async {
+  Future<void> _obtainCompanies(String locid, String type) async {
     final url =
-        'https://genapi.bluapps.in/society/visitor_from/6?visitType_id=${widget.type}';
+        'https://genapi.bluapps.in/society/visitor_from/6?visitType_id=${type}';
     try {
       final response = await http.get(url);
       final jresponse = json.decode(response.body) as Map;
@@ -43,15 +46,22 @@ class _SelectCompanyState extends State<SelectCompany> {
       return _fullCompany;
   }
 
+  bool _didload = false;
+
   @override
-  void initState() {
-    _obtainCompanies();
-    //.then((value){setState(() {});} );
-    super.initState();
+  void didChangeDependencies() async {
+    final locid = Provider.of<Auth>(context, listen: false).loc_id;
+    final type = ModalRoute.of(context).settings.arguments;
+    if (!_didload) {
+      await _obtainCompanies(locid, type);
+      _didload = true;
+    }
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+    final Map mapInput = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         title: Text('Select a Company'),
@@ -61,8 +71,11 @@ class _SelectCompanyState extends State<SelectCompany> {
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
             leading: Image.network(_filtered[index]['logo']),
-            title: Text(_filtered[index]['logo']),
-            onTap: () {},
+            title: Text(_filtered[index]['name']),
+            onTap: () {
+              mapInput['callback'](_filtered[index]['name']);
+              Navigator.pop(context);
+            },
           );
         },
         trailing: IconButton(

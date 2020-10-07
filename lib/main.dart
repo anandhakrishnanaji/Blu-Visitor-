@@ -11,6 +11,10 @@ import './pages/languagePage.dart';
 import './pages/loginPage.dart';
 import 'providers/auth.dart';
 import './pages/cameraScreen.dart';
+import './pages/addFlatsPage.dart';
+import './pages/addPropertiesPage.dart';
+import './pages/addVisitorForm.dart';
+import './pages/selectCompanyPage.dart';
 
 List<CameraDescription> cameras;
 Future<void> main() async {
@@ -78,7 +82,10 @@ class _MyAppState extends State<MyApp> {
             Home.routeName: (ctx) => Home(),
             VisitorType.routeName: (ctx) => VisitorType(),
             LanguagePage.routeName: (ctx) => LanguagePage(),
-            CameraScreen.routeName: (ctx) => CameraScreen(widget.camera)
+            CameraScreen.routeName: (ctx) => CameraScreen(widget.camera),
+            AddFlats.routeName: (ctx) => AddFlats(),
+            AddProperties.routeName: (ctx) => AddProperties(),
+            SelectCompany.routeName: (ctx) => SelectCompany()
           },
         ),
       ),

@@ -4,13 +4,15 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:camera/camera.dart';
 import 'dart:io';
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import '../providers/auth.dart';
 import './cameraScreen.dart';
 import './selectCompanyPage.dart';
 
 class AddVisitorForm extends StatefulWidget {
-  static const routeName = '/registration';
+  static const routeName = '/addVisitor';
   final String type;
   AddVisitorForm(this.type);
   @override
@@ -44,7 +46,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
     'company': null
   };
 
-  String dropdownValue = '', dropdownValuenumber = '0';
+  String dropdownValuenumber = '0';
 
   void _saveform() {
     _isValid = _form.currentState.validate();
@@ -71,7 +73,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
   bool isloading = false;
 
   bool _phonelisten = false, _namelisten = false, available = false;
-  String _phonein = '', _namein = '';
+  String _phonein = '', _namein = '', _vehiclein = '';
 
   void _listen(bool a) async {
     bool jb = a ? _phonelisten : _namelisten, available;
@@ -110,9 +112,32 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
     }
   }
 
+  Future<Map> _obtainUserDetails(
+      String locid, String session, String tel) async {
+    final url =
+        'https://genapi.bluapps.in/society_v1/tel_search/$locid?session=$session&projid=$locid&tel=$tel';
+    try {
+      final response = await http.get(url);
+      final jresponse = json.decode(response.body) as Map;
+      if (jresponse['status'] == 'failed') {
+        print('Number obtaining failed');
+        return null;
+      } else {
+        if (jresponse['data']['members'].length > 0)
+          return jresponse['data']['members'][0];
+        else
+          return null;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final type = ModalRoute.of(context).settings.arguments;
     final height = MediaQuery.of(context).size.height;
+    final prov = Provider.of<Auth>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text('Add a Visitor'),
@@ -143,26 +168,39 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                               icon: Icon(Icons.mic),
                               onPressed: () => _listen(true))),
                       TextFormField(
-                          initialValue: _phonein,
-                          decoration: InputDecoration(
-                              labelText: 'Enter your Mobile Number',
-                              isDense: true,
-                              contentPadding: EdgeInsets.all(10)),
-                          keyboardType: TextInputType.phone,
-                          textInputAction: TextInputAction.next,
-                          onFieldSubmitted: (_) =>
-                              _namefocusnode.requestFocus(),
-                          validator: (value) {
-                            if (value.isEmpty)
-                              return "The field cannot be empty";
-                            else if (value.length != 10)
-                              return "The field must only contain 10 digits";
-                            else if (!_isNumeric(value))
-                              return "The field can only contain digits";
-                            else
-                              return null;
-                          },
-                          onSaved: (newValue) => _check['mobile'] = newValue),
+                        initialValue: _phonein,
+                        decoration: InputDecoration(
+                            labelText: 'Enter your Mobile Number',
+                            isDense: true,
+                            contentPadding: EdgeInsets.all(10)),
+                        keyboardType: TextInputType.phone,
+                        textInputAction: TextInputAction.next,
+                        onFieldSubmitted: (_) => _namefocusnode.requestFocus(),
+                        validator: (value) {
+                          if (value.isEmpty)
+                            return "The field cannot be empty";
+                          else if (value.length != 10)
+                            return "The field must only contain 10 digits";
+                          else if (!_isNumeric(value))
+                            return "The field can only contain digits";
+                          else
+                            return null;
+                        },
+                        onSaved: (newValue) => _check['mobile'] = newValue,
+                        onChanged: (value) async {
+                          if (value.length == 10 && _isNumeric(value)) {
+                            final udetails = await _obtainUserDetails(
+                                prov.loc_id, prov.session, value);
+                            if (udetails != null) {
+                              setState(() {
+                                _namein = udetails['visitor_name'];
+                                _check['company'] = udetails['visitor_company'];
+                                _vehiclein = udetails['vehicle_no'];
+                              });
+                            }
+                          }
+                        },
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -198,20 +236,20 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                   SizedBox(
                     height: 0.02 * height,
                   ),
-                  TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Enter Vehicle Number',
-                          isDense: true,
-                          contentPadding: EdgeInsets.all(10)),
-                      textInputAction: TextInputAction.next,
-                      focusNode: _vehiclenode,
-                      validator: (value) {
-                        if (value.isEmpty)
-                          return "The field cannot be empty";
-                        else
-                          return null;
-                      },
-                      onSaved: (newValue) => _check['vehicle'] = newValue),
+                  Row(
+                    children: <Widget>[
+                      Text('Vehicle Number'),
+                      TextFormField(
+                          initialValue: _vehiclein,
+                          decoration: InputDecoration(
+                              labelText: 'Enter Vehicle Number',
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(10)),
+                          textInputAction: TextInputAction.next,
+                          focusNode: _vehiclenode,
+                          onSaved: (newValue) => _check['vehicle'] = newValue),
+                    ],
+                  ),
                   SizedBox(
                     height: 0.02 * height,
                   ),
@@ -220,11 +258,15 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                       Text('Select Company'),
                       _check['company'] == null
                           ? RaisedButton(
-                              onPressed: () => Navigator.of(context)
-                                      .pushNamed(SelectCompany.routeName,
-                                          arguments: (String value) {
-                                    setState(() => _check['company'] = value);
-                                  }))
+                              onPressed: () => Navigator.of(context).pushNamed(
+                                      SelectCompany.routeName,
+                                      arguments: {
+                                        'callback': (String value) {
+                                          setState(
+                                              () => _check['company'] = value);
+                                        },
+                                        'type': type
+                                      }))
                           : InkWell(
                               child: Text(_check['company']),
                               onTap: () => Navigator.of(context)
@@ -294,7 +336,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                   isloading
                       ? CircularProgressIndicator()
                       : Container(
-                          color: Colors.black,
+                          color: Colors.blueAccent[700],
                           child: MaterialButton(
                             child: Text(
                               'Submit',
