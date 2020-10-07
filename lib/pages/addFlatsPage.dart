@@ -15,15 +15,15 @@ class AddFlats extends StatefulWidget {
 }
 
 class _AddFlatsState extends State<AddFlats> {
-  List _finalList = [], _filteredList = [], _selected;
+  List _finalList = [], _filteredList = [], _selected = [];
   bool _didload = false;
 
   Future<List> _obtainFlats(
       String session, String locid, List _propertyids) async {
     String url =
-        'https://genapi.bluapps.in/society_v1/get_property_flats/$locid&session=$session';
+        'https://genapi.bluapps.in/society_v1/get_property_flats/$locid?session=$session';
     _propertyids.forEach((element) {
-      url += '&property_id[]=${element['property_id']}';
+      url += '&property_id[]=$element';
     });
     try {
       final response = await http.get(url);
@@ -42,21 +42,24 @@ class _AddFlatsState extends State<AddFlats> {
     }
   }
 
-  List<Map> _buildList(String str) {
+  void _buildList(String str) {
     if (str.isNotEmpty) {
+      // print(str);
       int ind = 0;
       List _templist = new List();
       _finalList.forEach((element) {
         _templist.add({'name': element['name'], 'data': []});
+        print(element['data']);
         element['data'].forEach((e) {
           if (e['flat_no'].toLowerCase().contains(str.toLowerCase()))
-            _templist[ind]['data'].add(element);
+            _templist[ind]['data'].add(e);
         });
         ind++;
       });
-      return _templist;
+      setState(() => _filteredList = _templist);
+      //print(_templist);
     } else
-      return _finalList;
+      setState(() => _filteredList = _finalList);
   }
 
   @override
@@ -67,6 +70,7 @@ class _AddFlatsState extends State<AddFlats> {
       _finalList = await _obtainFlats(prov.session, prov.loc_id, flats);
       _filteredList = _finalList;
       _didload = true;
+      setState(() {});
     }
     super.didChangeDependencies();
   }
@@ -79,32 +83,42 @@ class _AddFlatsState extends State<AddFlats> {
           centerTitle: true,
         ),
         body: FloatingSearchBar(
-          onChanged: (value) {
-            setState(() {
-              _filteredList = _buildList(value);
-            });
-          },
+          onChanged: (value) => _buildList(value),
           children: _filteredList
               .map((e) => Column(
                     children: <Widget>[
-                      Text(e['name']),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        padding: EdgeInsets.all(5),
+                        width: double.infinity,
+                        child: Text(
+                          e['name'],
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        decoration: BoxDecoration(color: Colors.grey[350]),
+                      ),
                       GridView.builder(
+                        shrinkWrap: true,
                         itemCount: e['data'].length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 1.75,
+                            childAspectRatio: 2.5,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10),
                         itemBuilder: (context, index) {
+                          // print(e['data']);
+                          // print(index);
                           bool a = _selected.contains(e['data'][index]);
                           return InkWell(
                             child: Container(
+                              padding: EdgeInsets.all(15),
                               decoration: BoxDecoration(
                                   color: a
-                                      ? Colors.blue[900]
-                                      : Colors.blueAccent[700],
+                                      ? Colors.purple[800]
+                                      : Colors.purple[200],
                                   borderRadius: BorderRadius.circular(30)),
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   a
                                       ? Icon(
@@ -112,11 +126,16 @@ class _AddFlatsState extends State<AddFlats> {
                                           color: Colors.white,
                                         )
                                       : SizedBox(),
-                                  e['data'][index]['flat_no']
+                                  Text(
+                                    e['data'][index]['flat_no'].toString(),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  )
                                 ],
                               ),
                             ),
                             onTap: () {
+                              print(e['data'][index].toString());
                               setState(() {
                                 if (a)
                                   _selected.remove(e['data'][index]);

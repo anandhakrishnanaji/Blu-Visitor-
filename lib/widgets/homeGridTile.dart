@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import '../pages/selectCompanyPage.dart';
+import '../pages/addVisitorForm.dart';
 
 class HomeGridTile extends StatelessWidget {
   final Map visitorType;
@@ -9,7 +9,7 @@ class HomeGridTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.of(context).pushNamed(SelectCompany.routeName,
+      onTap: () => Navigator.of(context).pushNamed(AddVisitorForm.routeName,
           arguments: visitorType['visitType_id']),
       child: Container(
         decoration: BoxDecoration(

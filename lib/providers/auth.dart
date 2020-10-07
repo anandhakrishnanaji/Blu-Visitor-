@@ -25,12 +25,13 @@ class Auth with ChangeNotifier {
       if (jresponse['status'] == 'failed')
         throw (jresponse['message']);
       else {
-        _session = jresponse['data']['session_id'];
-        _loc_id = jresponse['data']['loc_id'];
+        _session = jresponse['session_id'];
+        _loc_id = jresponse['loc_id'];
         await _saveToken();
         return true;
       }
     } catch (e) {
+      print('maybe');
       throw (e.toString());
     }
   }

@@ -36,8 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     return int.tryParse(s) != null;
   }
 
-  bool _isValidPhone;
-  bool _isValidPass;
+  bool _isValidPhone = true, _isValidPass = true;
 
   bool _validatePhone(String phone) {
     if (phone.length != 10) return false;
@@ -45,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   bool _validatePassword(String pass) {
-    return pass.isEmpty;
+    return pass.isNotEmpty;
   }
 
   @override
@@ -63,6 +62,7 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     final phone = TextFormField(
+      controller: _phone,
       keyboardType: TextInputType.phone,
       autofocus: false,
       decoration: InputDecoration(
@@ -74,6 +74,7 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     final password = TextFormField(
+      controller: _pass,
       autofocus: false,
       obscureText: true,
       decoration: InputDecoration(
@@ -97,11 +98,12 @@ class _LoginPageState extends State<LoginPage> {
           });
           if (_isValidPass && _isValidPhone) {
             setState(() => _isLoading = true);
-            Provider.of<Auth>(context)
+            Provider.of<Auth>(context, listen: false)
                 .login(_phone.text, _pass.text)
                 .then((value) {
               _isLoading = false;
-              Navigator.pushReplacementNamed(context, Home.routeName);
+              if (value)
+                Navigator.pushReplacementNamed(context, Home.routeName);
             }).catchError((e) {
               setState(() {
                 _isLoading = false;
@@ -138,9 +140,11 @@ class _LoginPageState extends State<LoginPage> {
             password,
             SizedBox(height: 0.033 * height),
             _isLoading
-                ? Padding(
-                    child: CircularProgressIndicator(),
-                    padding: EdgeInsets.all(15),
+                ? Center(
+                    child: Padding(
+                      child: CircularProgressIndicator(),
+                      padding: EdgeInsets.all(15),
+                    ),
                   )
                 : login,
             forgotLabel

@@ -14,6 +14,9 @@ class AddProperties extends StatefulWidget {
 }
 
 class _AddPropertiesState extends State<AddProperties> {
+  List _finalList = [], _selected = [];
+  bool _didload = false;
+
   Future<List> _obtainProperties(String session, String locid) async {
     final url =
         'https://genapi.bluapps.in/society/get_properties/$locid?session=$session';
@@ -29,85 +32,78 @@ class _AddPropertiesState extends State<AddProperties> {
     }
   }
 
-  List<Map> _selected = [];
+  @override
+  void didChangeDependencies() async {
+    if (!_didload) {
+      final prov = Provider.of<Auth>(context, listen: false);
+      _finalList = await _obtainProperties(prov.session, prov.loc_id);
+      _didload = true;
+      setState(() {});
+    }
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final prov = Provider.of<Auth>(context, listen: false);
+    final userDetails = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Select Building'),
-        actions: <Widget>[
-          InkWell(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: <Widget>[Text('Next'), Icon(Icons.navigate_next)],
-              ),
-            ),
-            onTap: () {
+        appBar: AppBar(
+          title: Text('Select Building'),
+        ),
+        body: Container(
+          padding: EdgeInsets.all(15),
+          child: GridView.builder(
+              itemCount: _finalList.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 2.5,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10),
+              itemBuilder: (context, index) {
+                bool a = _selected.contains(_finalList[index]);
+                return InkWell(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: a ? Colors.purple[900] : Colors.purple[600],
+                        borderRadius: BorderRadius.circular(40)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        a
+                            ? Icon(
+                                Icons.check,
+                                color: Colors.white,
+                              )
+                            : SizedBox(),
+                        Text(
+                          _finalList[index]['building_name'],
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        )
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      if (a)
+                        _selected.remove(_finalList[index]);
+                      else
+                        _selected.add(_finalList[index]);
+                    });
+                  },
+                );
+              }),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+            heroTag: 'flotag',
+            icon: Icon(Icons.arrow_forward_ios),
+            label: Text("Next"),
+            onPressed: () {
               List _propertyids = [];
               _selected.forEach(
                   (element) => _propertyids.add(element['property_id']));
+              print(_propertyids);
               Navigator.of(context)
                   .pushNamed(AddFlats.routeName, arguments: _propertyids);
-            },
-          )
-        ],
-      ),
-      body: FutureBuilder(
-        future: _obtainProperties(prov.session, prov.loc_id),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting)
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          else if (snapshot.hasError) {
-            Future.delayed(
-                Duration.zero,
-                () => showDialog(
-                    context: context,
-                    child: Alertbox(snapshot.error.toString())));
-            return SizedBox();
-          } else
-            return GridView.builder(
-                itemCount: snapshot.data.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 1.75,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10),
-                itemBuilder: (context, index) {
-                  bool a = _selected.contains(snapshot.data[index]);
-                  return InkWell(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: a ? Colors.blue[900] : Colors.blueAccent[700],
-                          borderRadius: BorderRadius.circular(30)),
-                      child: Row(
-                        children: <Widget>[
-                          a
-                              ? Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                )
-                              : SizedBox(),
-                          snapshot.data[index]['building_name']
-                        ],
-                      ),
-                    ),
-                    onTap: () {
-                      setState(() {
-                        if (a)
-                          _selected.remove(snapshot.data[index]);
-                        else
-                          _selected.add(snapshot.data[index]);
-                      });
-                    },
-                  );
-                });
-        },
-      ),
-    );
+            }));
   }
 }

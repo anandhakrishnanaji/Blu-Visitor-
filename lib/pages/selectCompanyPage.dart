@@ -15,11 +15,11 @@ class SelectCompany extends StatefulWidget {
 }
 
 class _SelectCompanyState extends State<SelectCompany> {
-  List<Map> _fullCompany = [], _filtered = [];
+  List _fullCompany = [], _filtered = [];
 
   Future<void> _obtainCompanies(String locid, String type) async {
     final url =
-        'https://genapi.bluapps.in/society/visitor_from/6?visitType_id=${type}';
+        'https://genapi.bluapps.in/society/visitor_from/6?visitType_id=$type';
     try {
       final response = await http.get(url);
       final jresponse = json.decode(response.body) as Map;
@@ -34,7 +34,7 @@ class _SelectCompanyState extends State<SelectCompany> {
     }
   }
 
-  List<Map> _buildList(String str) {
+  List _buildList(String str) {
     if (str.isNotEmpty) {
       List _templist = new List();
       _fullCompany.forEach((element) {
@@ -47,52 +47,60 @@ class _SelectCompanyState extends State<SelectCompany> {
   }
 
   bool _didload = false;
+  Map mapinput;
 
   @override
   void didChangeDependencies() async {
     final locid = Provider.of<Auth>(context, listen: false).loc_id;
-    final type = ModalRoute.of(context).settings.arguments;
+    print(ModalRoute.of(context).settings.arguments);
+    mapinput = ModalRoute.of(context).settings.arguments;
     if (!_didload) {
-      await _obtainCompanies(locid, type);
+      await _obtainCompanies(locid, mapinput['type']);
+      print(_filtered);
       _didload = true;
+      setState(() {});
     }
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Map mapInput = ModalRoute.of(context).settings.arguments;
+    print(_filtered);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Select a Company'),
-      ),
-      body: FloatingSearchBar.builder(
-        itemCount: _filtered.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            leading: Image.network(_filtered[index]['logo']),
-            title: Text(_filtered[index]['name']),
-            onTap: () {
-              mapInput['callback'](_filtered[index]['name']);
-              Navigator.pop(context);
-            },
-          );
-        },
-        trailing: IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () => FocusScope.of(context).unfocus()),
-        leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-            ),
-            onPressed: () => Navigator.pop(context)),
-        onChanged: (String value) {
-          setState(() {
-            _filtered = _buildList(value);
-          });
-        },
-        decoration: InputDecoration.collapsed(
-          hintText: "Search...",
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: FloatingSearchBar.builder(
+          itemCount: _filtered.length,
+          itemBuilder: (BuildContext context, int index) {
+            //print(index);
+            return Padding(
+              padding: EdgeInsets.all(5),
+              child: ListTile(
+                leading: Image.network(_filtered[index]['logo']),
+                title: Text(_filtered[index]['name']),
+                onTap: () {
+                  mapinput['callback'](_filtered[index]['name']);
+                  Navigator.pop(context);
+                },
+              ),
+            );
+          },
+          trailing: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () => FocusScope.of(context).unfocus()),
+          leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+              ),
+              onPressed: () => Navigator.pop(context)),
+          onChanged: (String value) {
+            setState(() {
+              _filtered = _buildList(value);
+            });
+          },
+          decoration: InputDecoration.collapsed(
+            hintText: "Search...",
+          ),
         ),
       ),
     );

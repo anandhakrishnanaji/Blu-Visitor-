@@ -10,11 +10,10 @@ import 'dart:convert';
 import '../providers/auth.dart';
 import './cameraScreen.dart';
 import './selectCompanyPage.dart';
+import './addPropertiesPage.dart';
 
 class AddVisitorForm extends StatefulWidget {
   static const routeName = '/addVisitor';
-  final String type;
-  AddVisitorForm(this.type);
   @override
   _AddVisitorFormState createState() => _AddVisitorFormState();
 }
@@ -43,7 +42,8 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
     'name': null,
     'mobile': null,
     'vehicle': null,
-    'company': null
+    'company': null,
+    'guest': null,
   };
 
   String dropdownValuenumber = '0';
@@ -56,14 +56,22 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
     _form.currentState.save();
   }
 
+  TextEditingController _phonein, _namein, _vehiclein;
+
   @override
   void initState() {
     _speech = stt.SpeechToText();
+    _phonein = TextEditingController();
+    _namein = TextEditingController();
+    _vehiclein = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
+    _phonein.dispose();
+    _vehiclein.dispose();
+    _namein.dispose();
     _namefocusnode.dispose();
     _vehiclenode.dispose();
 
@@ -73,11 +81,11 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
   bool isloading = false;
 
   bool _phonelisten = false, _namelisten = false, available = false;
-  String _phonein = '', _namein = '', _vehiclein = '';
 
   void _listen(bool a) async {
-    bool jb = a ? _phonelisten : _namelisten, available;
-    if (jb) {
+    print('etthi');
+    bool jb = a ? _phonelisten : _namelisten;
+    if (!jb) {
       available = await _speech.initialize(
         onStatus: (status) => print('Onstatus $status'),
         onError: (errorNotification) => print('OnError $errorNotification'),
@@ -94,9 +102,9 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
           onResult: (result) {
             setState(() {
               if (a)
-                _phonein = result.recognizedWords;
+                _phonein.text = result.recognizedWords;
               else
-                _namein = result.recognizedWords;
+                _namein.text = result.recognizedWords;
             });
           },
         );
@@ -152,168 +160,249 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 0.03 * height),
-                    child: Text('Create Account',
-                        style: TextStyle(fontSize: 0.035 * height)),
-                  ),
                   Row(
                     children: <Widget>[
-                      Text('Mobile'),
-                      AvatarGlow(
-                          animate: _phonelisten,
-                          repeat: true,
-                          endRadius: 30,
-                          child: IconButton(
-                              icon: Icon(Icons.mic),
-                              onPressed: () => _listen(true))),
-                      TextFormField(
-                        initialValue: _phonein,
-                        decoration: InputDecoration(
-                            labelText: 'Enter your Mobile Number',
-                            isDense: true,
-                            contentPadding: EdgeInsets.all(10)),
-                        keyboardType: TextInputType.phone,
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) => _namefocusnode.requestFocus(),
-                        validator: (value) {
-                          if (value.isEmpty)
-                            return "The field cannot be empty";
-                          else if (value.length != 10)
-                            return "The field must only contain 10 digits";
-                          else if (!_isNumeric(value))
-                            return "The field can only contain digits";
-                          else
-                            return null;
-                        },
-                        onSaved: (newValue) => _check['mobile'] = newValue,
-                        onChanged: (value) async {
-                          if (value.length == 10 && _isNumeric(value)) {
-                            final udetails = await _obtainUserDetails(
-                                prov.loc_id, prov.session, value);
-                            if (udetails != null) {
-                              setState(() {
-                                _namein = udetails['visitor_name'];
-                                _check['company'] = udetails['visitor_company'];
-                                _vehiclein = udetails['vehicle_no'];
-                              });
-                            }
-                          }
-                        },
+                      Container(
+                        width: 130,
+                        child: Row(
+                          children: <Widget>[
+                            Text('Mobile'),
+                            AvatarGlow(
+                                glowColor: Colors.red,
+                                animate: _phonelisten,
+                                repeat: true,
+                                endRadius: 30,
+                                child: IconButton(
+                                    icon: Icon(Icons.mic, color: Colors.red),
+                                    onPressed: () => _listen(true))),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 0.02 * height,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text('Name'),
-                      AvatarGlow(
-                          animate: _namelisten,
-                          repeat: true,
-                          endRadius: 30,
-                          child: IconButton(
-                              icon: Icon(Icons.mic),
-                              onPressed: () => _listen(false))),
-                      TextFormField(
-                        initialValue: _namein,
-                        decoration: InputDecoration(
-                            labelText: 'Enter your Name',
-                            isDense: true,
-                            contentPadding: EdgeInsets.all(10)),
-                        textInputAction: TextInputAction.next,
-                        focusNode: _namefocusnode,
-                        validator: (value) =>
-                            value.isEmpty ? "The field cannot be empty" : null,
-                        onSaved: (newValue) => _check['name'] = newValue,
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 0.02 * height,
-                  ),
-                  SizedBox(
-                    height: 0.02 * height,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text('Vehicle Number'),
-                      TextFormField(
-                          initialValue: _vehiclein,
+                      Expanded(
+                        child: TextFormField(
+                          controller: _phonein,
                           decoration: InputDecoration(
-                              labelText: 'Enter Vehicle Number',
+                              labelText: 'Enter your Mobile Number',
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(10)),
+                          keyboardType: TextInputType.phone,
+                          textInputAction: TextInputAction.next,
+                          onFieldSubmitted: (_) =>
+                              _namefocusnode.requestFocus(),
+                          validator: (value) {
+                            if (value.isEmpty)
+                              return "The field cannot be empty";
+                            else if (value.length != 10)
+                              return "The field must only contain 10 digits";
+                            else if (!_isNumeric(value))
+                              return "The field can only contain digits";
+                            else
+                              return null;
+                          },
+                          onSaved: (newValue) => _check['mobile'] = newValue,
+                          onChanged: (value) async {
+                            if (value.length == 10 && _isNumeric(value)) {
+                              print('10 reached');
+                              final udetails = await _obtainUserDetails(
+                                  prov.loc_id, prov.session, value);
+                              if (udetails != null) {
+                                setState(() {
+                                  _namein.text = udetails['visitor_name'];
+                                  _check['company'] =
+                                      udetails['visitor_company'];
+                                  _vehiclein.text = udetails['vehicle_no'];
+                                });
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 0.02 * height,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 130,
+                        child: Row(
+                          children: <Widget>[
+                            Text('Name'),
+                            AvatarGlow(
+                                glowColor: Colors.red,
+                                animate: _namelisten,
+                                repeat: true,
+                                endRadius: 30,
+                                child: IconButton(
+                                    icon: Icon(
+                                      Icons.mic,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () => _listen(false)))
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _namein,
+                          decoration: InputDecoration(
+                              labelText: 'Enter your Name',
                               isDense: true,
                               contentPadding: EdgeInsets.all(10)),
                           textInputAction: TextInputAction.next,
-                          focusNode: _vehiclenode,
-                          onSaved: (newValue) => _check['vehicle'] = newValue),
+                          focusNode: _namefocusnode,
+                          validator: (value) => value.isEmpty
+                              ? "The field cannot be empty"
+                              : null,
+                          onSaved: (newValue) => _check['name'] = newValue,
+                        ),
+                      ),
                     ],
+                  ),
+                  SizedBox(
+                    height: 0.02 * height,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          child: Text('Select Company'),
+                          width: 130,
+                        ),
+                        _check['company'] == null
+                            ? FlatButton(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text('Not Selected'),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 20,
+                                    )
+                                  ],
+                                ),
+                                onPressed: () => Navigator.of(context)
+                                        .pushNamed(SelectCompany.routeName,
+                                            arguments: {
+                                          'callback': (String value) {
+                                            setState(() =>
+                                                _check['company'] = value);
+                                          },
+                                          'type': type
+                                        }))
+                            : InkWell(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(_check['company']),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 20,
+                                    )
+                                  ],
+                                ),
+                                onTap: () => Navigator.of(context).pushNamed(
+                                    SelectCompany.routeName,
+                                    arguments: {
+                                      'callback': (String value) {
+                                        setState(
+                                            () => _check['company'] = value);
+                                      },
+                                      'type': type
+                                    }),
+                              )
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: 0.02 * height,
                   ),
                   Row(
                     children: <Widget>[
-                      Text('Select Company'),
-                      _check['company'] == null
-                          ? RaisedButton(
-                              onPressed: () => Navigator.of(context).pushNamed(
-                                      SelectCompany.routeName,
-                                      arguments: {
-                                        'callback': (String value) {
-                                          setState(
-                                              () => _check['company'] = value);
-                                        },
-                                        'type': type
-                                      }))
-                          : InkWell(
-                              child: Text(_check['company']),
-                              onTap: () => Navigator.of(context)
-                                  .pushNamed(SelectCompany.routeName,
-                                      arguments: (String value) {
-                                setState(() => _check['company'] = value);
-                              }),
-                            )
+                      Container(
+                        child: Text('Vehicle Number'),
+                        width: 130,
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                            controller: _vehiclein,
+                            decoration: InputDecoration(
+                                labelText: 'Enter Vehicle Number',
+                                isDense: true,
+                                contentPadding: EdgeInsets.all(10)),
+                            textInputAction: TextInputAction.next,
+                            onFieldSubmitted: (value) =>
+                                FocusScope.of(context).unfocus(),
+                            focusNode: _vehiclenode,
+                            onSaved: (newValue) =>
+                                _check['vehicle'] = newValue),
+                      ),
                     ],
                   ),
                   SizedBox(
-                    height: 0.02 * height,
+                    height: 0.04 * height,
                   ),
-                  DropdownButton<String>(
-                    value: dropdownValuenumber,
-                    icon: Icon(Icons.arrow_drop_down),
-                    iconSize: 24,
-                    elevation: 16,
-                    //style: TextStyle(color: Colors.deepPurple),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.black,
-                    ),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        dropdownValuenumber = newValue;
-                      });
-                    },
-                    items: <String>['0', '1', '2', 'More']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        child: Text('Guest'),
+                        width: 130,
+                      ),
+                      DropdownButton<String>(
+                        value: dropdownValuenumber,
+                        icon: Icon(Icons.arrow_drop_down),
+                        iconSize: 24,
+                        elevation: 16,
+                        //style: TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.black,
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            dropdownValuenumber = newValue;
+                          });
+                        },
+                        items: <String>['0', '1', '2', 'More']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(value),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ),
                   SizedBox(
-                    height: 0.02 * height,
+                    height: 0.04 * height,
                   ),
                   Row(
                     children: <Widget>[
                       _path != null
                           ? Stack(children: <Widget>[
-                              Image.file(File(_path)),
-                              Container(
+                              Image.file(
+                                File(_path),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                              Align(
                                 child: IconButton(
-                                  icon: Icon(Icons.close),
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                  ),
                                   onPressed: () {
                                     final String _copy = _path;
                                     setState(() => _path = null);
@@ -324,8 +413,19 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                                 alignment: Alignment.topRight,
                               )
                             ])
-                          : SizedBox(),
+                          : Container(
+                              alignment: Alignment.center,
+                              width: 130,
+                              child: Icon(
+                                Icons.camera_alt,
+                                size: 100,
+                              ),
+                            ),
+                      SizedBox(
+                        width: 30,
+                      ),
                       RaisedButton(
+                          child: Text('Take Picture'),
                           onPressed: () => Navigator.of(context)
                                   .pushNamed(CameraScreen.routeName,
                                       arguments: (String pth) {
@@ -333,53 +433,22 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                               }))
                     ],
                   ),
-                  isloading
-                      ? CircularProgressIndicator()
-                      : Container(
-                          color: Colors.blueAccent[700],
-                          child: MaterialButton(
-                            child: Text(
-                              'Submit',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                            onPressed: () {
-                              _saveform();
-
-                              if (_isValid) {
-                                setState(() {
-                                  isloading = true;
-                                });
-                                // Provider.of<Auth>(context, listen: false)
-                                //     .register(
-                                //         _check['name'],
-                                //         _check['mobile'],
-                                //         _check['email'],
-                                //         _check['company'],
-                                //         profession)
-                                //     .then((value) {
-                                //   if (value)
-                                //     // Navigator.of(context)
-                                //     //     .pushNamed(OTPVerification.routeName);
-                                //   setState(() {
-                                //     isloading = false;
-                                //   });
-                                // }).catchError((e) {
-                                //   setState(() {
-                                //     isloading = false;
-                                //   });
-                                //   showDialog(
-                                //       context: context,
-                                //       child: Alertbox(e.toString()));
-                                // });
-                              }
-                            },
-                          ),
-                        ),
                 ],
               ),
             )),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+          heroTag: 'flotag',
+          icon: Icon(Icons.arrow_forward_ios),
+          label: Text("Next"),
+          onPressed: () {
+            _saveform();
+            if (_isValid) {
+              _check['guest'] = dropdownValuenumber;
+              Navigator.of(context)
+                  .pushNamed(AddProperties.routeName, arguments: _check);
+            }
+          }),
     );
   }
 }

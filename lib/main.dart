@@ -85,7 +85,8 @@ class _MyAppState extends State<MyApp> {
             CameraScreen.routeName: (ctx) => CameraScreen(widget.camera),
             AddFlats.routeName: (ctx) => AddFlats(),
             AddProperties.routeName: (ctx) => AddProperties(),
-            SelectCompany.routeName: (ctx) => SelectCompany()
+            SelectCompany.routeName: (ctx) => SelectCompany(),
+            AddVisitorForm.routeName:(ctx)=>AddVisitorForm()
           },
         ),
       ),

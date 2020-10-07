@@ -17,7 +17,7 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   CameraController _controller;
   Future<void> _initializeControllerFuture;
-
+  String imgPath;
   bool _wait = false;
 
   @override
@@ -41,7 +41,6 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     final Function callback = ModalRoute.of(context).settings.arguments;
-    String imgPath;
     return Scaffold(
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
@@ -54,25 +53,35 @@ class _CameraScreenState extends State<CameraScreen> {
         },
       ),
       floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _wait
               ? FloatingActionButton(
+                  heroTag: 'first',
                   backgroundColor: Colors.red,
-                  child: Icon(Icons.cancel),
+                  child: Icon(
+                    Icons.cancel,
+                    color: Colors.red,
+                  ),
                   onPressed: () {
+                    print(imgPath);
                     File _file = File(imgPath);
                     _file.delete();
                     setState(() => _wait = false);
                   },
                 )
               : SizedBox(),
+          SizedBox(
+            width: 30,
+          ),
           FloatingActionButton(
+            heroTag: 'second',
             backgroundColor: Colors.blueAccent[700],
             child: Icon(_wait ? Icons.check : Icons.camera_alt),
             onPressed: () async {
               if (_wait) {
-                callback(imgPath);
                 Navigator.pop(context);
+                callback(imgPath);
               } else {
                 try {
                   await _initializeControllerFuture;
@@ -84,6 +93,8 @@ class _CameraScreenState extends State<CameraScreen> {
                   imgPath = path;
 
                   await _controller.takePicture(path);
+                  setState(() => _wait = true);
+                  print('hello boi');
                 } catch (e) {
                   showDialog(context: context, child: Alertbox(e.toString()));
                 }
