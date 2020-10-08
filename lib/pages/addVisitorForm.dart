@@ -43,7 +43,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
     'mobile': null,
     'vehicle': null,
     'company': null,
-    'guest': null,
+    'companyid': null
   };
 
   String dropdownValuenumber = '0';
@@ -143,7 +143,8 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
 
   @override
   Widget build(BuildContext context) {
-    final type = ModalRoute.of(context).settings.arguments;
+    final Map visitDetails = ModalRoute.of(context).settings.arguments;
+    final type = visitDetails['visitid'];
     final height = MediaQuery.of(context).size.height;
     final prov = Provider.of<Auth>(context, listen: false);
     return Scaffold(
@@ -289,9 +290,12 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                                 onPressed: () => Navigator.of(context)
                                         .pushNamed(SelectCompany.routeName,
                                             arguments: {
-                                          'callback': (String value) {
-                                            setState(() =>
-                                                _check['company'] = value);
+                                          'callback':
+                                              (String value, String cid) {
+                                            setState(() {
+                                              _check['company'] = value;
+                                              _check['companyid'] = cid;
+                                            });
                                           },
                                           'type': type
                                         }))
@@ -444,9 +448,18 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
           onPressed: () {
             _saveform();
             if (_isValid) {
-              _check['guest'] = dropdownValuenumber;
+              Map udetail = new Map();
+              udetail['visitor[visitType_id]']=type;
+              udetail['visitor[visittype_details_id]']=_check['companyid'];
+              udetail['visitor[visitor_name]']=_check['name'];
+              udetail['visitor[visitType]']=visitDetails['visitype'];
+              udetail['visitor[v_mobile]']=_check['mobile'];
+              udetail['visitor[visitor_company]']=_check['company'];
+              udetail['visitor[visitor]']='visitor';
+              udetail['visitor[members]']=dropdownValuenumber;
+              udetail['visitor[vehicle_no]']=_check['vehicle'];
               Navigator.of(context)
-                  .pushNamed(AddProperties.routeName, arguments: _check);
+                  .pushNamed(AddProperties.routeName, arguments: udetail);
             }
           }),
     );

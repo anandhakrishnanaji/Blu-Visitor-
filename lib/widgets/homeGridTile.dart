@@ -10,7 +10,7 @@ class HomeGridTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => Navigator.of(context).pushNamed(AddVisitorForm.routeName,
-          arguments: visitorType['visitType_id']),
+          arguments: {'visitid':visitorType['visitType_id'],'visitype': visitorType['name'] }),
       child: Container(
         decoration: BoxDecoration(
             color: Colors.grey[200], borderRadius: BorderRadius.circular(30)),

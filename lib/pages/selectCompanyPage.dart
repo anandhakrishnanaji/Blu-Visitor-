@@ -79,7 +79,7 @@ class _SelectCompanyState extends State<SelectCompany> {
                 leading: Image.network(_filtered[index]['logo']),
                 title: Text(_filtered[index]['name']),
                 onTap: () {
-                  mapinput['callback'](_filtered[index]['name']);
+                  mapinput['callback'](_filtered[index]['name'], _filtered[index]['visittype_details_id'] );
                   Navigator.pop(context);
                 },
               ),

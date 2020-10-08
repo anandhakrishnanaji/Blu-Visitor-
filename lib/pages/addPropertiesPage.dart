@@ -45,7 +45,7 @@ class _AddPropertiesState extends State<AddProperties> {
 
   @override
   Widget build(BuildContext context) {
-    final userDetails = ModalRoute.of(context).settings.arguments;
+    Map userDetails = ModalRoute.of(context).settings.arguments;
     return Scaffold(
         appBar: AppBar(
           title: Text('Select Building'),
@@ -98,12 +98,29 @@ class _AddPropertiesState extends State<AddProperties> {
             icon: Icon(Icons.arrow_forward_ios),
             label: Text("Next"),
             onPressed: () {
-              List _propertyids = [];
-              _selected.forEach(
-                  (element) => _propertyids.add(element['property_id']));
-              print(_propertyids);
-              Navigator.of(context)
-                  .pushNamed(AddFlats.routeName, arguments: _propertyids);
+              if (_selected.length == 0) {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text('Atleast one property must be selected!')));
+              } else {
+                List _propertyids = [];
+                _selected.forEach((element) {
+                  userDetails[
+                          'property_access[${element['property_id']}][property_id]'] =
+                      element['property_id'];
+                  userDetails[
+                          'property_access[${element['property_id']}][wing]'] =
+                      element['wing_name'];
+                  userDetails[
+                          'property_access[${element['property_id']}][building_name]'] =
+                      element['building_name'];
+                  _propertyids.add(element['property_id']);
+                });
+                print(_propertyids);
+                Navigator.of(context).pushNamed(AddFlats.routeName, arguments: {
+                  'propertyids': _propertyids,
+                  'userdetails': userDetails
+                });
+              }
             }));
   }
 }
