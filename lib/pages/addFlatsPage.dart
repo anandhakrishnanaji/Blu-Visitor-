@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:floating_search_bar/floating_search_bar.dart';
 
 import '../providers/auth.dart';
+import './homePage.dart';
 
 class AddFlats extends StatefulWidget {
   // final List _propertyids;
@@ -42,6 +43,25 @@ class _AddFlatsState extends State<AddFlats> {
     }
   }
 
+  Future<void> _addVisitor(
+      Map userDetails, String session, String locid) async {
+    String url =
+        'https://genapi.bluapps.in/society_v1/save_visitor/$locid?session=$session';
+    userDetails.forEach((key, value) {
+      url += '&$key=$value';
+    });
+    try {
+      final response = await http.get(url);
+      print(response.body);
+
+      final jresponse = json.decode(response.body) as Map;
+      if (jresponse['status'] == 'failed') throw (jresponse['message']);
+      print(jresponse);
+    } catch (e) {
+      //throw (e.toString());
+    }
+  }
+
   void _buildList(String str) {
     if (str.isNotEmpty) {
       // print(str);
@@ -49,7 +69,7 @@ class _AddFlatsState extends State<AddFlats> {
       List _templist = new List();
       _finalList.forEach((element) {
         _templist.add({'name': element['name'], 'data': []});
-        print(element['data']);
+        // print(element['data']);
         element['data'].forEach((e) {
           if (e['flat_no'].toLowerCase().contains(str.toLowerCase()))
             _templist[ind]['data'].add(e);
@@ -63,13 +83,13 @@ class _AddFlatsState extends State<AddFlats> {
   }
 
   Map userDetails;
-
+  var prov;
   @override
   void didChangeDependencies() async {
     final Map arg = ModalRoute.of(context).settings.arguments;
     userDetails = arg['userdetails'];
     if (!_didload) {
-      final prov = Provider.of<Auth>(context, listen: false);
+      prov = Provider.of<Auth>(context, listen: false);
       _finalList =
           await _obtainFlats(prov.session, prov.loc_id, arg['propertyids']);
       _filteredList = _finalList;
@@ -79,9 +99,12 @@ class _AddFlatsState extends State<AddFlats> {
     super.didChangeDependencies();
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldkey1 = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldkey1,
       appBar: AppBar(
         title: Text('Select Flats'),
         centerTitle: true,
@@ -138,13 +161,14 @@ class _AddFlatsState extends State<AddFlats> {
                             ),
                           ),
                           onTap: () {
-                            print(e['data'][index].toString());
+                            // print(e['data'][index].toString());
                             setState(() {
                               if (a)
                                 _selected.remove(e['data'][index]);
                               else
                                 _selected.add(e['data'][index]);
                             });
+                            //print(_selected);
                           },
                         );
                       },
@@ -158,19 +182,37 @@ class _AddFlatsState extends State<AddFlats> {
         icon: Icon(Icons.check),
         label: Text("Submit"),
         onPressed: () {
-          
-          _selected.forEach((element) {
-            element['data'].forEach((e) {
-              userDetails['visitor_flats[${e['fltypeid']}][property_id]'] =
-                  e['property_id'];
-              userDetails['visitor_flats[${e['fltypeid']}][building_name]'] =
-                  element['name'];
-              userDetails['visitor_flats[${e['fltypeid']}][wing_name]'] =
-                  e['wing_name'];
-              userDetails['visitor_flats[${e['fltypeid']}][fltypeid]'] =
-                  e['fltypeid'];
+          if (_selected.length == 0) {
+            _scaffoldkey1.currentState.showSnackBar(
+                SnackBar(content: Text('Atleast one flat must be Selected')));
+          } else {
+            print(_selected);
+            _selected.forEach((element) {
+              userDetails[
+                      'visitor_flats[${element['fltypeid']}][property_id]'] =
+                  element['property_id'];
+              userDetails[
+                      'visitor_flats[${element['fltypeid']}][building_name]'] =
+                  element['building_name'];
+              userDetails['visitor_flats[${element['fltypeid']}][wing_name]'] =
+                  element['wing_name'];
+              userDetails['visitor_flats[${element['fltypeid']}][fltypeid]'] =
+                  element['fltypeid'];
+              userDetails['visitor_flats[${element['fltypeid']}][flat_no]'] =
+                  element['flat_no'];
             });
-          });
+            userDetails['visitor[v_photo]'] = " ";
+            userDetails['visitor[v_add]'] = " ";
+            userDetails['visitor[v_email]'] = "";
+            print(userDetails);
+            _addVisitor(userDetails, prov.session, prov.loc_id).then((value) {
+              _scaffoldkey1.currentState.showSnackBar(
+                  SnackBar(content: Text('Visitor Successfully added')));
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  Home.routeName, (Route<dynamic> route) => false);
+              print('added');
+            });
+          }
         },
       ),
     );

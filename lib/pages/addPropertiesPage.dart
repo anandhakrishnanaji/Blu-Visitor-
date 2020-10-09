@@ -16,6 +16,7 @@ class AddProperties extends StatefulWidget {
 class _AddPropertiesState extends State<AddProperties> {
   List _finalList = [], _selected = [];
   bool _didload = false;
+  final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
 
   Future<List> _obtainProperties(String session, String locid) async {
     final url =
@@ -47,6 +48,7 @@ class _AddPropertiesState extends State<AddProperties> {
   Widget build(BuildContext context) {
     Map userDetails = ModalRoute.of(context).settings.arguments;
     return Scaffold(
+        key: _scaffoldkey,
         appBar: AppBar(
           title: Text('Select Building'),
         ),
@@ -99,7 +101,7 @@ class _AddPropertiesState extends State<AddProperties> {
             label: Text("Next"),
             onPressed: () {
               if (_selected.length == 0) {
-                Scaffold.of(context).showSnackBar(SnackBar(
+                _scaffoldkey.currentState.showSnackBar(SnackBar(
                     content: Text('Atleast one property must be selected!')));
               } else {
                 List _propertyids = [];
@@ -115,7 +117,7 @@ class _AddPropertiesState extends State<AddProperties> {
                       element['building_name'];
                   _propertyids.add(element['property_id']);
                 });
-                print(_propertyids);
+                // print(_propertyids);
                 Navigator.of(context).pushNamed(AddFlats.routeName, arguments: {
                   'propertyids': _propertyids,
                   'userdetails': userDetails

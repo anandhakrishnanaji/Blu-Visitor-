@@ -83,7 +83,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
   bool _phonelisten = false, _namelisten = false, available = false;
 
   void _listen(bool a) async {
-    print('etthi');
+    // print('etthi');
     bool jb = a ? _phonelisten : _namelisten;
     if (!jb) {
       available = await _speech.initialize(
