@@ -42,16 +42,22 @@ class _CameraScreenState extends State<CameraScreen> {
   Widget build(BuildContext context) {
     final Function callback = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return CameraPreview(_controller);
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+      body: imgPath != null
+          ? Container(
+              decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: FileImage(File(imgPath)), fit: BoxFit.cover),
+            ))
+          : FutureBuilder<void>(
+              future: _initializeControllerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return CameraPreview(_controller);
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -67,7 +73,10 @@ class _CameraScreenState extends State<CameraScreen> {
                     print(imgPath);
                     File _file = File(imgPath);
                     _file.delete();
-                    setState(() => _wait = false);
+                    setState(() {
+                      imgPath = null;
+                      _wait = false;
+                    });
                   },
                 )
               : SizedBox(),
@@ -90,10 +99,12 @@ class _CameraScreenState extends State<CameraScreen> {
                     (await getTemporaryDirectory()).path,
                     '${DateTime.now()}.png',
                   );
-                  imgPath = path;
 
                   await _controller.takePicture(path);
-                  setState(() => _wait = true);
+                  setState(() {
+                    imgPath = path;
+                    _wait = true;
+                  });
                   print('hello boi');
                 } catch (e) {
                   showDialog(context: context, child: Alertbox(e.toString()));

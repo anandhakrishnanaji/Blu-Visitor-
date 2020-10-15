@@ -41,9 +41,9 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
   Map<String, dynamic> _check = {
     'name': null,
     'mobile': null,
-    'vehicle': null,
-    'company': null,
-    'companyid': null
+    'vehicle': "",
+    'company': "",
+    'companyid': ""
   };
 
   String dropdownValuenumber = '0';
@@ -141,10 +141,15 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
     }
   }
 
+  bool _isloaded = false;
+  String type;
   @override
   Widget build(BuildContext context) {
     final Map visitDetails = ModalRoute.of(context).settings.arguments;
-    final type = visitDetails['visitid'];
+    if (!_isloaded) {
+      type = visitDetails['visitid'];
+      _isloaded = true;
+    }
     final height = MediaQuery.of(context).size.height;
     final prov = Provider.of<Auth>(context, listen: false);
     return Scaffold(
@@ -161,6 +166,12 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.grey),
+                        child: Row(  ) ,
+                  ),
                   Row(
                     children: <Widget>[
                       Container(
@@ -272,7 +283,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                           child: Text('Select Company'),
                           width: 130,
                         ),
-                        _check['company'] == null
+                        _check['company'] == ""
                             ? FlatButton(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -287,18 +298,21 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                                     )
                                   ],
                                 ),
-                                onPressed: () => Navigator.of(context)
-                                        .pushNamed(SelectCompany.routeName,
-                                            arguments: {
-                                          'callback':
-                                              (String value, String cid) {
-                                            setState(() {
-                                              _check['company'] = value;
-                                              _check['companyid'] = cid;
-                                            });
-                                          },
-                                          'type': type
-                                        }))
+                                onPressed: () {
+                                  print(type);
+                                  if (type == '4') return;
+                                  Navigator.of(context).pushNamed(
+                                      SelectCompany.routeName,
+                                      arguments: {
+                                        'callback': (String value, String cid) {
+                                          setState(() {
+                                            _check['company'] = value;
+                                            _check['companyid'] = cid;
+                                          });
+                                        },
+                                        'type': type
+                                      });
+                                })
                             : InkWell(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -449,15 +463,15 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
             _saveform();
             if (_isValid) {
               Map udetail = new Map();
-              udetail['visitor[visitType_id]']=type;
-              udetail['visitor[visittype_details_id]']=_check['companyid'];
-              udetail['visitor[visitor_name]']=_check['name'];
-              udetail['visitor[visitType]']=visitDetails['visitype'];
-              udetail['visitor[v_mobile]']=_check['mobile'];
-              udetail['visitor[visitor_company]']=_check['company'];
-              udetail['visitor[visitor]']='visitor';
-              udetail['visitor[members]']=dropdownValuenumber;
-              udetail['visitor[vehicle_no]']=_check['vehicle'];
+              udetail['visitor[visitType_id]'] = type;
+              udetail['visitor[visittype_details_id]'] = _check['companyid'];
+              udetail['visitor[visitor_name]'] = _check['name'];
+              udetail['visitor[visitType]'] = visitDetails['visitype'];
+              udetail['visitor[v_mobile]'] = _check['mobile'];
+              udetail['visitor[visitor_company]'] = _check['company'];
+              udetail['visitor[visitor]'] = 'visitor';
+              udetail['visitor[members]'] = dropdownValuenumber;
+              udetail['visitor[vehicle_no]'] = _check['vehicle'];
               Navigator.of(context)
                   .pushNamed(AddProperties.routeName, arguments: udetail);
             }
