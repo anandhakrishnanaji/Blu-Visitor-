@@ -5,6 +5,7 @@ import 'package:floating_search_bar/floating_search_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth.dart';
+import '../widgets/textFieldDialog.dart';
 
 class SelectCompany extends StatefulWidget {
   static const routeName = '/selectCompany';
@@ -67,42 +68,80 @@ class _SelectCompanyState extends State<SelectCompany> {
   Widget build(BuildContext context) {
     print(_filtered);
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: FloatingSearchBar.builder(
-          itemCount: _filtered.length,
-          itemBuilder: (BuildContext context, int index) {
-            //print(index);
-            return Padding(
-              padding: EdgeInsets.all(5),
-              child: ListTile(
-                leading: Image.network(_filtered[index]['logo']),
-                title: Text(_filtered[index]['name']),
-                onTap: () {
-                  mapinput['callback'](_filtered[index]['name'], _filtered[index]['visittype_details_id'] );
+        body: Padding(
+      padding: const EdgeInsets.all(10),
+      child: FloatingSearchBar(
+        children: [
+          MaterialButton(
+            onPressed: () async {
+              await showDialog(
+                  context: context,
+                  builder: (contex) => TextFieldDialog()).then((value) {
+                print(value);
+                if (value != "null") {
+                  print(mapinput['callback'].toString());
+                  mapinput['callback'](value, "0");
                   Navigator.pop(context);
-                },
-              ),
-            );
-          },
-          trailing: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () => FocusScope.of(context).unfocus()),
-          leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-              ),
-              onPressed: () => Navigator.pop(context)),
-          onChanged: (String value) {
-            setState(() {
-              _filtered = _buildList(value);
-            });
-          },
-          decoration: InputDecoration.collapsed(
-            hintText: "Search...",
+                }
+              });
+            },
+            color: Colors.red,
+            child: Text(
+              'Add Company',
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            minWidth: double.infinity,
           ),
+          GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+              itemCount: _filtered.length,
+              itemBuilder: (BuildContext context, int index) {
+                //print(index);
+                return InkWell(
+                  child: Container(
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: 70,
+                          width: 70,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(_filtered[index]['logo']),
+                                  fit: BoxFit.contain)),
+                        ),
+                        Text(_filtered[index]['name']),
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    mapinput['callback'](_filtered[index]['name'],
+                        _filtered[index]['visittype_details_id']);
+                    Navigator.pop(context);
+                  },
+                );
+              })
+        ],
+        trailing: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () => FocusScope.of(context).unfocus()),
+        leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+            ),
+            onPressed: () => Navigator.pop(context)),
+        onChanged: (String value) {
+          setState(() {
+            _filtered = _buildList(value);
+          });
+        },
+        decoration: InputDecoration.collapsed(
+          hintText: "Search...",
         ),
       ),
-    );
+    ));
   }
 }

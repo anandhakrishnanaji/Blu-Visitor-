@@ -58,7 +58,7 @@ class _AddPropertiesState extends State<AddProperties> {
               itemCount: _finalList.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 2.5,
+                  childAspectRatio: 2.75,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10),
               itemBuilder: (context, index) {
@@ -66,8 +66,8 @@ class _AddPropertiesState extends State<AddProperties> {
                 return InkWell(
                   child: Container(
                     decoration: BoxDecoration(
-                        color: a ? Colors.purple[900] : Colors.purple[600],
-                        borderRadius: BorderRadius.circular(40)),
+                        color: a ? Colors.blue[800] : Colors.blue[300],
+                        borderRadius: BorderRadius.circular(30)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -79,7 +79,7 @@ class _AddPropertiesState extends State<AddProperties> {
                             : SizedBox(),
                         Text(
                           _finalList[index]['building_name'],
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          style: TextStyle(color: Colors.white, fontSize: 18),
                         )
                       ],
                     ),

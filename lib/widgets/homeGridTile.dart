@@ -10,7 +10,10 @@ class HomeGridTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => Navigator.of(context).pushNamed(AddVisitorForm.routeName,
-          arguments: {'visitid':visitorType['visitType_id'],'visitype': visitorType['name'] }),
+          arguments: {
+            'visitid': visitorType['visitType_id'],
+            'visitype': visitorType['name']
+          }),
       child: Container(
         decoration: BoxDecoration(
             color: Colors.grey[200], borderRadius: BorderRadius.circular(30)),
@@ -19,12 +22,12 @@ class HomeGridTile extends StatelessWidget {
           children: <Widget>[
             CircleAvatar(
               backgroundColor: Colors.white,
-              radius: 30,
+              radius: 25,
               backgroundImage: NetworkImage(visitorType['logo']),
             ),
             Text(
               visitorType['name'],
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 20),
             ).tr()
           ],
         ),

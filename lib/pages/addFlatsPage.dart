@@ -128,7 +128,7 @@ class _AddFlatsState extends State<AddFlats> {
                       shrinkWrap: true,
                       itemCount: e['data'].length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                          crossAxisCount: 3,
                           childAspectRatio: 2.5,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10),
@@ -140,8 +140,7 @@ class _AddFlatsState extends State<AddFlats> {
                           child: Container(
                             padding: EdgeInsets.all(15),
                             decoration: BoxDecoration(
-                                color:
-                                    a ? Colors.purple[800] : Colors.purple[200],
+                                color: a ? Colors.blue[800] : Colors.blue[300],
                                 borderRadius: BorderRadius.circular(30)),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -155,7 +154,7 @@ class _AddFlatsState extends State<AddFlats> {
                                 Text(
                                   e['data'][index]['flat_no'].toString(),
                                   style: TextStyle(
-                                      color: Colors.white, fontSize: 20),
+                                      color: Colors.white, fontSize: 17),
                                 )
                               ],
                             ),

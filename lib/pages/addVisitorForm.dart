@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
 import '../providers/auth.dart';
 import './cameraScreen.dart';
@@ -46,7 +47,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
     'companyid': ""
   };
 
-  String dropdownValuenumber = '0';
+  String dropdownValuenumber = 'Not Selected';
 
   void _saveform() {
     _isValid = _form.currentState.validate();
@@ -93,10 +94,13 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
 
       if (available) {
         setState(() {
-          if (a)
+          if (a) {
+            _namelisten = false;
             _phonelisten = true;
-          else
+          } else {
+            _phonelisten = false;
             _namelisten = true;
+          }
         });
         _speech.listen(
           onResult: (result) {
@@ -167,10 +171,43 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: Colors.grey),
-                        child: Row(  ) ,
+                    margin: EdgeInsets.only(bottom: 20),
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(30)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: prov.iconlist
+                          .map<Widget>((e) => InkWell(
+                                onTap: () =>
+                                    setState(() => type = e['visitType_id']),
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: e['visitType_id'] == type
+                                        ? Colors.blue[900]
+                                        : Colors.white,
+                                  ),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Image.network(
+                                        e['logo'],
+                                        height: 65,
+                                        width: 65,
+                                      ),
+                                      Text(e['name'],
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: e['visitType_id'] == type
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
                   ),
                   Row(
                     children: <Widget>[
@@ -180,18 +217,26 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                           children: <Widget>[
                             Text('Mobile'),
                             AvatarGlow(
-                                glowColor: Colors.red,
+                                glowColor:
+                                    _phonelisten ? Colors.blue : Colors.red,
                                 animate: _phonelisten,
                                 repeat: true,
                                 endRadius: 30,
                                 child: IconButton(
-                                    icon: Icon(Icons.mic, color: Colors.red),
+                                    icon: Icon(Icons.mic,
+                                        color: _phonelisten
+                                            ? Colors.blue
+                                            : Colors.red),
                                     onPressed: () => _listen(true))),
                           ],
                         ),
                       ),
                       Expanded(
                         child: TextFormField(
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(10),
+                            WhitelistingTextInputFormatter.digitsOnly
+                          ],
                           controller: _phonein,
                           decoration: InputDecoration(
                               labelText: 'Enter your Mobile Number',
@@ -242,14 +287,17 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                           children: <Widget>[
                             Text('Name'),
                             AvatarGlow(
-                                glowColor: Colors.red,
+                                glowColor:
+                                    _namelisten ? Colors.blue : Colors.red,
                                 animate: _namelisten,
                                 repeat: true,
                                 endRadius: 30,
                                 child: IconButton(
                                     icon: Icon(
                                       Icons.mic,
-                                      color: Colors.red,
+                                      color: _namelisten
+                                          ? Colors.blue
+                                          : Colors.red,
                                     ),
                                     onPressed: () => _listen(false)))
                           ],
@@ -280,7 +328,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                     child: Row(
                       children: <Widget>[
                         Container(
-                          child: Text('Select Company'),
+                          child: Text('Company'),
                           width: 130,
                         ),
                         _check['company'] == ""
@@ -305,6 +353,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                                       SelectCompany.routeName,
                                       arguments: {
                                         'callback': (String value, String cid) {
+                                          print('hello');
                                           setState(() {
                                             _check['company'] = value;
                                             _check['companyid'] = cid;
@@ -330,9 +379,12 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                                 onTap: () => Navigator.of(context).pushNamed(
                                     SelectCompany.routeName,
                                     arguments: {
-                                      'callback': (String value) {
-                                        setState(
-                                            () => _check['company'] = value);
+                                      'callback': (String value, String cid) {
+                                        print('hello');
+                                        setState(() {
+                                          _check['company'] = value;
+                                          _check['companyid'] = cid;
+                                        });
                                       },
                                       'type': type
                                     }),
@@ -407,6 +459,16 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                   ),
                   Row(
                     children: <Widget>[
+                      RaisedButton(
+                          child: Text('Take Picture'),
+                          onPressed: () => Navigator.of(context)
+                                  .pushNamed(CameraScreen.routeName,
+                                      arguments: (String pth) {
+                                setState(() => _path = pth);
+                              })),
+                      SizedBox(
+                        width: 30,
+                      ),
                       _path != null
                           ? Stack(children: <Widget>[
                               Image.file(
@@ -439,16 +501,6 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                                 size: 100,
                               ),
                             ),
-                      SizedBox(
-                        width: 30,
-                      ),
-                      RaisedButton(
-                          child: Text('Take Picture'),
-                          onPressed: () => Navigator.of(context)
-                                  .pushNamed(CameraScreen.routeName,
-                                      arguments: (String pth) {
-                                setState(() => _path = pth);
-                              }))
                     ],
                   ),
                 ],
@@ -470,7 +522,10 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
               udetail['visitor[v_mobile]'] = _check['mobile'];
               udetail['visitor[visitor_company]'] = _check['company'];
               udetail['visitor[visitor]'] = 'visitor';
-              udetail['visitor[members]'] = dropdownValuenumber;
+              udetail['visitor[members]'] =
+                  dropdownValuenumber == "Not Selected"
+                      ? ""
+                      : dropdownValuenumber;
               udetail['visitor[vehicle_no]'] = _check['vehicle'];
               Navigator.of(context)
                   .pushNamed(AddProperties.routeName, arguments: udetail);

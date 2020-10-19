@@ -13,6 +13,7 @@ class Auth with ChangeNotifier {
 
   get session => _session;
   get loc_id => _loc_id;
+  get iconlist => _iconlist;
 
   Future<bool> login(String mobile, String password) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
