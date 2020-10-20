@@ -7,6 +7,7 @@ class TextFieldDialog extends StatefulWidget {
 
 class _TextFieldDialogState extends State<TextFieldDialog> {
   TextEditingController _con;
+  bool _isError = false;
   @override
   void initState() {
     _con = TextEditingController();
@@ -25,12 +26,24 @@ class _TextFieldDialogState extends State<TextFieldDialog> {
       title: Text('Add a Company'),
       content: Container(
           child: TextField(
+        decoration: InputDecoration(
+            border: OutlineInputBorder(borderSide: BorderSide()),
+            labelText: 'Enter the company name',
+            errorText: _isError ? 'The field cannot be empty' : null,
+            isDense: true,
+            contentPadding: EdgeInsets.all(10)),
         controller: _con,
       )),
       actions: <Widget>[
         FlatButton(
-            onPressed: () => Navigator.pop(context,"null"), child: Text('Cancel')),
-        FlatButton(onPressed: ()=>Navigator.pop(context,_con.text) , child: Text('OK'))
+            onPressed: () => Navigator.pop(context, "null"),
+            child: Text('Cancel')),
+        FlatButton(
+            onPressed: () {
+              setState(() => _isError = _con.text.isEmpty);
+              if (!_isError) Navigator.pop(context, _con.text);
+            },
+            child: Text('OK'))
       ],
     );
   }

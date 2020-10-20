@@ -22,7 +22,7 @@ class AddVisitorForm extends StatefulWidget {
 class _AddVisitorFormState extends State<AddVisitorForm> {
   CameraController controller;
 
-  stt.SpeechToText _speech;
+  stt.SpeechToText _speech, _speech1;
 
   final _namefocusnode = FocusNode();
   final _vehiclenode = FocusNode();
@@ -62,6 +62,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
   @override
   void initState() {
     _speech = stt.SpeechToText();
+    _speech1 = stt.SpeechToText();
     _phonein = TextEditingController();
     _namein = TextEditingController();
     _vehiclein = TextEditingController();
@@ -81,7 +82,10 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
 
   bool isloading = false;
 
-  bool _phonelisten = false, _namelisten = false, available = false;
+  bool _phonelisten = false,
+      _namelisten = false,
+      available = false,
+      _complisten = false;
 
   void _listen(bool a) async {
     // print('etthi');
@@ -105,9 +109,10 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
         _speech.listen(
           onResult: (result) {
             setState(() {
-              if (a)
-                _phonein.text = result.recognizedWords;
-              else
+              if (a) {
+                if (_isNumeric(result.recognizedWords))
+                  _phonein.text = result.recognizedWords;
+              } else
                 _namein.text = result.recognizedWords;
             });
           },
@@ -120,6 +125,31 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
         else
           _namelisten = false;
         _speech.stop();
+      });
+    }
+  }
+
+  void _listencomp() async {
+    if (!_complisten) {
+      available = await _speech1.initialize(
+        onStatus: (status) => print('Onstatus $status'),
+        onError: (errorNotification) => print('OnError $errorNotification'),
+      );
+      if (available) {
+        setState(() {
+          _complisten = true;
+        });
+        _speech.listen(
+          onResult: (result) {
+            setState(() {
+              _check["company"] = result.recognizedWords;
+            });
+          },
+        );
+      }
+    } else {
+      setState(() {
+        _complisten = false;
       });
     }
   }
@@ -163,7 +193,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
-            horizontal: 0.04 * height, vertical: 0.05 * height),
+            horizontal: 0.03 * height, vertical: 0.03 * height),
         child: Form(
             key: _form,
             child: SingleChildScrollView(
@@ -173,7 +203,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                   Container(
                     margin: EdgeInsets.only(bottom: 20),
                     decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(30)),
+                        BoxDecoration(borderRadius: BorderRadius.circular(20)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: prov.iconlist
@@ -183,7 +213,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
+                                    borderRadius: BorderRadius.circular(20),
                                     color: e['visitType_id'] == type
                                         ? Colors.blue[900]
                                         : Colors.white,
@@ -192,8 +222,8 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                                     children: <Widget>[
                                       Image.network(
                                         e['logo'],
-                                        height: 65,
-                                        width: 65,
+                                        height: 71,
+                                        width: 71,
                                       ),
                                       Text(e['name'],
                                           style: TextStyle(
@@ -212,7 +242,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                   Row(
                     children: <Widget>[
                       Container(
-                        width: 130,
+                        width: 115,
                         child: Row(
                           children: <Widget>[
                             Text('Mobile'),
@@ -239,6 +269,8 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                           ],
                           controller: _phonein,
                           decoration: InputDecoration(
+                              border:
+                                  OutlineInputBorder(borderSide: BorderSide()),
                               labelText: 'Enter your Mobile Number',
                               isDense: true,
                               contentPadding: EdgeInsets.all(10)),
@@ -282,7 +314,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                   Row(
                     children: <Widget>[
                       Container(
-                        width: 130,
+                        width: 115,
                         child: Row(
                           children: <Widget>[
                             Text('Name'),
@@ -307,6 +339,8 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                         child: TextFormField(
                           controller: _namein,
                           decoration: InputDecoration(
+                              border:
+                                  OutlineInputBorder(borderSide: BorderSide()),
                               labelText: 'Enter your Name',
                               isDense: true,
                               contentPadding: EdgeInsets.all(10)),
@@ -324,12 +358,28 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                     height: 0.02 * height,
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
+                    padding: EdgeInsets.symmetric(vertical: 15),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          child: Text('Company'),
-                          width: 130,
+                          child: Row(
+                            children: <Widget>[
+                              Text('Company'),
+                              AvatarGlow(
+                                  glowColor:
+                                      _complisten ? Colors.blue : Colors.red,
+                                  animate: _complisten,
+                                  repeat: true,
+                                  endRadius: 30,
+                                  child: IconButton(
+                                      icon: Icon(Icons.mic,
+                                          color: _complisten
+                                              ? Colors.blue
+                                              : Colors.red),
+                                      onPressed: () => _listencomp()))
+                            ],
+                          ),
+                          width: 115,
                         ),
                         _check['company'] == ""
                             ? FlatButton(
@@ -399,12 +449,14 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                     children: <Widget>[
                       Container(
                         child: Text('Vehicle Number'),
-                        width: 130,
+                        width: 115,
                       ),
                       Expanded(
                         child: TextFormField(
                             controller: _vehiclein,
                             decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide()),
                                 labelText: 'Enter Vehicle Number',
                                 isDense: true,
                                 contentPadding: EdgeInsets.all(10)),
@@ -423,8 +475,8 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                   Row(
                     children: <Widget>[
                       Container(
-                        child: Text('Guest'),
-                        width: 130,
+                        child: Text('No. of Person'),
+                        width: 115,
                       ),
                       DropdownButton<String>(
                         value: dropdownValuenumber,
@@ -441,7 +493,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                             dropdownValuenumber = newValue;
                           });
                         },
-                        items: <String>['0', '1', '2', 'More']
+                        items: <String>['Not Selected', '0', '1', '2', 'More']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -495,7 +547,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                             ])
                           : Container(
                               alignment: Alignment.center,
-                              width: 130,
+                              width: 115,
                               child: Icon(
                                 Icons.camera_alt,
                                 size: 100,
