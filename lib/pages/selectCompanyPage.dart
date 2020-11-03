@@ -102,12 +102,12 @@ class _SelectCompanyState extends State<SelectCompany> {
                 //print(index);
                 return InkWell(
                   child: Container(
-                    padding: EdgeInsets.all(5),
+                    //padding: EdgeInsets.all(5),
                     child: Column(
                       children: <Widget>[
                         Container(
-                          height: 70,
-                          width: 70,
+                          height: 60,
+                          width: 60,
                           decoration: BoxDecoration(
                               image: DecorationImage(
                                   image: NetworkImage(_filtered[index]['logo']),
@@ -139,7 +139,7 @@ class _SelectCompanyState extends State<SelectCompany> {
           });
         },
         decoration: InputDecoration.collapsed(
-          hintText: "Search...",
+          hintText: "Search",
         ),
       ),
     ));

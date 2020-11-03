@@ -222,8 +222,8 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                                     children: <Widget>[
                                       Image.network(
                                         e['logo'],
-                                        height: 71,
-                                        width: 71,
+                                        height: 55,
+                                        width: 55,
                                       ),
                                       Text(e['name'],
                                           style: TextStyle(
@@ -309,7 +309,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                     ],
                   ),
                   SizedBox(
-                    height: 0.02 * height,
+                    height: 0.01 * height,
                   ),
                   Row(
                     children: <Widget>[
@@ -355,7 +355,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                     ],
                   ),
                   SizedBox(
-                    height: 0.02 * height,
+                    height: 0.01 * height,
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 15),
@@ -443,7 +443,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                     ),
                   ),
                   SizedBox(
-                    height: 0.02 * height,
+                    height: 0.01 * height,
                   ),
                   Row(
                     children: <Widget>[
@@ -470,7 +470,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                     ],
                   ),
                   SizedBox(
-                    height: 0.04 * height,
+                    height: 0.01 * height,
                   ),
                   Row(
                     children: <Widget>[
@@ -507,7 +507,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                     ],
                   ),
                   SizedBox(
-                    height: 0.04 * height,
+                    height: 0.01 * height,
                   ),
                   Row(
                     children: <Widget>[
